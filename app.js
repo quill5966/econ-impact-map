@@ -2,16 +2,15 @@
 
 const NODES = [
     {
-        id: 'fed-policy',
-        title: 'Fed Policy',
+        id: 'policy-instruments',
+        title: 'Policy Instruments',
         icon: '🏛️',
-        theme: 'fed-policy',
+        theme: 'policy-instruments',
         color: [155, 95, 255],
         subItems: [
-            { name: 'Fed Funds Rate', value: '3.50–3.75%' },
-            { name: 'QE/QT', value: 'QT Ongoing' },
-            { name: 'Forward Guidance', value: 'Hold' },
-            { name: '10Y Treasury', value: '4.09%' },
+            { name: 'Fed Funds Target', value: '—' },
+            { name: 'QE/QT Pace', value: '—' },
+            { name: 'Forward Guidance', value: '—' },
         ],
     },
     {
@@ -21,36 +20,25 @@ const NODES = [
         theme: 'financial',
         color: [45, 212, 191],
         subItems: [
-            { name: 'IG Spreads', value: '110 bps' },
-            { name: 'HY Spreads', value: '288 bps' },
-            { name: 'DXY', value: '97.80' },
-            { name: 'Liquidity', value: 'Easing' },
+            { name: 'Front-end Yields (2Y)', value: '—' },
+            { name: 'Long-end Yields (10Y)', value: '—' },
+            { name: 'Mortgage Rates', value: '—' },
         ],
     },
     {
-        id: 'growth',
-        title: 'Demand / Growth',
+        id: 'real-economy',
+        title: 'Real Economy',
         icon: '📈',
-        theme: 'growth',
+        theme: 'real-economy',
         color: [96, 165, 250],
         subItems: [
-            { name: 'GDP Growth', value: '+2.2% YoY' },
-            { name: 'Consumer Spending', value: '+2.8%' },
-            { name: 'Biz Investment', value: 'Moderate' },
-            { name: 'Housing', value: 'Cooling' },
-        ],
-    },
-    {
-        id: 'labor',
-        title: 'Labor',
-        icon: '🤝',
-        theme: 'labor',
-        color: [245, 158, 11],
-        subItems: [
-            { name: 'Unemployment', value: '4.5%' },
-            { name: 'Job Openings', value: 'Declining' },
-            { name: 'Wage Growth', value: '+3.8%' },
-            { name: 'LFPR', value: '62.5%' },
+            { name: 'Housing Starts', value: '—' },
+            { name: 'Consumer Spending', value: '—' },
+            { name: 'Corporate Borrowing', value: '—' },
+            { name: 'GDP Growth', value: '—' },
+            { name: 'Unemployment', value: '—' },
+            { name: 'Job Openings', value: '—' },
+            { name: 'Wage Growth', value: '—' },
         ],
     },
     {
@@ -60,46 +48,31 @@ const NODES = [
         theme: 'inflation',
         color: [248, 96, 96],
         subItems: [
-            { name: 'CPI', value: '2.4% YoY' },
-            { name: 'PPI', value: '3.0% YoY' },
-            { name: 'PCE', value: '2.9%' },
-            { name: 'Core PCE', value: '3.0%' },
+            { name: 'Core CPI', value: '—' },
+            { name: 'Core PPI', value: '—' },
+            { name: 'Headline CPI', value: '—' },
+            { name: 'Headline PPI', value: '—' },
+            { name: 'PCE', value: '—' },
+            { name: 'Core PCE', value: '—' },
+        ],
+    },
+    {
+        id: 'exogenous',
+        title: 'Exogenous Shocks',
+        icon: '⚡',
+        theme: 'exogenous',
+        color: [234, 179, 8],
+        subItems: [
+            { name: 'Oil Barrel Price', value: '—' },
+            { name: 'Dow', value: '—' },
+            { name: 'Nasdaq', value: '—' },
+            { name: 'S&P 500', value: '—' },
+            { name: 'VIX', value: '—' },
         ],
     },
 ];
 
-const EDGES = [
-    {
-        id: 'fed-to-financial',
-        from: 'fed-policy',
-        to: 'financial',
-        label: 'Policy Tightening',
-    },
-    {
-        id: 'financial-to-growth',
-        from: 'financial',
-        to: 'growth',
-        label: 'Easing / Tightening',
-    },
-    {
-        id: 'growth-to-labor',
-        from: 'growth',
-        to: 'labor',
-        label: 'Economic Activity',
-    },
-    {
-        id: 'labor-to-inflation',
-        from: 'labor',
-        to: 'inflation',
-        label: 'Labor Market Tightness',
-    },
-    {
-        id: 'inflation-to-fed',
-        from: 'inflation',
-        to: 'fed-policy',
-        label: 'Price Pressures',
-    },
-];
+const EDGES = [];
 
 // ===== LAYOUT =====
 

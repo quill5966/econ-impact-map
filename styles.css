@@ -19,16 +19,16 @@
   --text-muted: rgba(255, 255, 255, 0.35);
 
   /* Node colors (vivid) */
-  --fed-policy: 155, 95, 255;
+  --policy-instruments: 155, 95, 255;
   /* bright purple */
   --financial: 45, 212, 191;
   /* bright teal */
-  --growth: 96, 165, 250;
+  --real-economy: 96, 165, 250;
   /* bright blue */
-  --labor: 245, 158, 11;
-  /* bright amber */
   --inflation: 248, 96, 96;
   /* bright red */
+  --exogenous: 234, 179, 8;
+  /* gold */
 
   /* Sizing */
   --node-size: 240px;
@@ -336,24 +336,24 @@ body {
 }
 
 /* ===== NODE COLOR VARIANTS ===== */
-.node[data-theme="fed-policy"] {
-  --node-color: var(--fed-policy);
+.node[data-theme="policy-instruments"] {
+  --node-color: var(--policy-instruments);
 }
 
 .node[data-theme="financial"] {
   --node-color: var(--financial);
 }
 
-.node[data-theme="growth"] {
-  --node-color: var(--growth);
-}
-
-.node[data-theme="labor"] {
-  --node-color: var(--labor);
+.node[data-theme="real-economy"] {
+  --node-color: var(--real-economy);
 }
 
 .node[data-theme="inflation"] {
   --node-color: var(--inflation);
+}
+
+.node[data-theme="exogenous"] {
+  --node-color: var(--exogenous);
 }
 
 /* ===== RESPONSIVE ===== */
