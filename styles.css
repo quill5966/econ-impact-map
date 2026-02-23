@@ -226,6 +226,29 @@ body {
 }
 
 /* ===== SUB-ITEMS (embedded inside node) ===== */
+.sub-items-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 0 2px;
+  width: 100%;
+}
+
+.sub-header-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.sub-header-col {
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
 .sub-items {
   display: flex;
   flex-direction: column;
@@ -243,16 +266,20 @@ body {
 .sub-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 6px;
   padding: 2px 0;
   white-space: nowrap;
+  cursor: help;
 }
 
 .sub-item-name {
   font-size: 9.5px;
   font-weight: 400;
   color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sub-item-value {
@@ -260,6 +287,17 @@ body {
   font-weight: 600;
   color: rgba(var(--node-color), 1);
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.sub-item-period {
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  text-align: right;
+  opacity: 0.7;
 }
 
 /* ===== EDGE LABELS ===== */

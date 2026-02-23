@@ -8,9 +8,9 @@ const NODES = [
         theme: 'policy-instruments',
         color: [155, 95, 255],
         subItems: [
-            { id: 'fed-funds-target', name: 'Fed Funds Target', value: '—', updateMode: 'manual' },
-            { id: 'qe-qt-pace', name: 'QE/QT Pace', value: '—', updateMode: 'manual' },
-            { id: 'forward-guidance', name: 'Forward Guidance', value: '—', updateMode: 'manual' },
+            { id: 'fed-funds-target', name: 'Fed Funds Target', value: '4.25–4.50%', period: 'Jan 28, 2026', source: 'FOMC decision (federalreserve.gov)', updateMode: 'manual' },
+            { id: 'qe-qt-pace', name: 'QE/QT Pace', value: 'QT Ended', period: 'Dec 1, 2025', source: 'Fed balance sheet (federalreserve.gov)', updateMode: 'manual' },
+            { id: 'forward-guidance', name: 'Forward Guidance', value: 'Hold / Data-dep.', period: 'Jan 28, 2026', source: 'FOMC statement + minutes', updateMode: 'manual' },
         ],
     },
     {
@@ -20,9 +20,9 @@ const NODES = [
         theme: 'financial',
         color: [45, 212, 191],
         subItems: [
-            { id: 'front-end-yields-2y', name: 'Front-end Yields (2Y)', value: '—', updateMode: 'derived' },
-            { id: 'long-end-yields-10y', name: 'Long-end Yields (10Y)', value: '—', updateMode: 'derived' },
-            { id: 'mortgage-rates', name: 'Mortgage Rates', value: '—', updateMode: 'derived' },
+            { id: 'front-end-yields-2y', name: 'Front-end Yields (2Y)', value: '3.48%', period: 'Feb 20, 2026', source: 'U.S. Treasury 2Y yield', updateMode: 'derived' },
+            { id: 'long-end-yields-10y', name: 'Long-end Yields (10Y)', value: '4.08%', period: 'Feb 20, 2026', source: 'U.S. Treasury 10Y yield', updateMode: 'derived' },
+            { id: 'mortgage-rates', name: 'Mortgage Rates', value: '6.01%', period: 'Feb 19, 2026', source: 'Freddie Mac PMMS 30-yr fixed', updateMode: 'derived' },
         ],
     },
     {
@@ -32,13 +32,13 @@ const NODES = [
         theme: 'real-economy',
         color: [96, 165, 250],
         subItems: [
-            { id: 'housing-starts', name: 'Housing Starts', value: '—', updateMode: 'derived' },
-            { id: 'consumer-spending', name: 'Consumer Spending', value: '—', updateMode: 'derived' },
-            { id: 'corporate-borrowing', name: 'Corporate Borrowing', value: '—', updateMode: 'derived' },
-            { id: 'gdp-growth', name: 'GDP Growth', value: '—', updateMode: 'derived' },
-            { id: 'unemployment', name: 'Unemployment', value: '—', updateMode: 'derived' },
-            { id: 'job-openings', name: 'Job Openings', value: '—', updateMode: 'derived' },
-            { id: 'wage-growth', name: 'Wage Growth', value: '—', updateMode: 'derived' },
+            { id: 'housing-starts', name: 'Housing Starts', value: '1.48M SAAR', period: 'Jan 2026', source: 'U.S. Census Bureau', updateMode: 'derived' },
+            { id: 'consumer-spending', name: 'Consumer Spending', value: '+0.4% MoM', period: 'Dec 2025', source: 'BEA Personal Income & Outlays', updateMode: 'derived' },
+            { id: 'corporate-borrowing', name: 'Corporate Borrowing', value: 'IG Spread 79bp', period: 'Feb 19, 2026', source: 'ICE BofA IG OAS', updateMode: 'derived' },
+            { id: 'gdp-growth', name: 'GDP Growth', value: '+1.4% (Q4)', period: 'Q4 2025', source: 'BEA advance estimate', updateMode: 'derived' },
+            { id: 'unemployment', name: 'Unemployment', value: '4.3%', period: 'Jan 2026', source: 'BLS Employment Situation', updateMode: 'derived' },
+            { id: 'job-openings', name: 'Job Openings', value: '6.5M', period: 'Dec 2025', source: 'BLS JOLTS', updateMode: 'derived' },
+            { id: 'wage-growth', name: 'Wage Growth', value: '+3.7% YoY', period: 'Jan 2026', source: 'BLS Avg Hourly Earnings', updateMode: 'derived' },
         ],
     },
     {
@@ -48,12 +48,12 @@ const NODES = [
         theme: 'inflation',
         color: [248, 96, 96],
         subItems: [
-            { id: 'core-cpi', name: 'Core CPI', value: '—', updateMode: 'derived' },
-            { id: 'core-ppi', name: 'Core PPI', value: '—', updateMode: 'derived' },
-            { id: 'headline-cpi', name: 'Headline CPI', value: '—', updateMode: 'derived' },
-            { id: 'headline-ppi', name: 'Headline PPI', value: '—', updateMode: 'derived' },
-            { id: 'pce', name: 'PCE', value: '—', updateMode: 'derived' },
-            { id: 'core-pce', name: 'Core PCE', value: '—', updateMode: 'derived' },
+            { id: 'core-cpi', name: 'Core CPI', value: '+2.5% YoY', period: 'Jan 2026', source: 'BLS CPI less food & energy', updateMode: 'derived' },
+            { id: 'core-ppi', name: 'Core PPI', value: '+3.3% YoY', period: 'Dec 2025', source: 'BLS PPI less food & energy', updateMode: 'derived' },
+            { id: 'headline-cpi', name: 'Headline CPI', value: '+2.4% YoY', period: 'Jan 2026', source: 'BLS CPI (bls.gov)', updateMode: 'derived' },
+            { id: 'headline-ppi', name: 'Headline PPI', value: '+3.0% YoY', period: 'Dec 2025', source: 'BLS PPI Final Demand', updateMode: 'derived' },
+            { id: 'pce', name: 'PCE', value: '+2.9% YoY', period: 'Dec 2025', source: 'BEA PCE Price Index', updateMode: 'derived' },
+            { id: 'core-pce', name: 'Core PCE', value: '+3.0% YoY', period: 'Dec 2025', source: 'BEA Core PCE Price Index', updateMode: 'derived' },
         ],
     },
     {
@@ -63,11 +63,11 @@ const NODES = [
         theme: 'exogenous',
         color: [234, 179, 8],
         subItems: [
-            { id: 'oil-barrel-price', name: 'Oil Barrel Price', value: '—', updateMode: 'manual' },
-            { id: 'dow', name: 'Dow', value: '—', updateMode: 'derived' },
-            { id: 'nasdaq', name: 'Nasdaq', value: '—', updateMode: 'derived' },
-            { id: 'sp-500', name: 'S&P 500', value: '—', updateMode: 'derived' },
-            { id: 'vix', name: 'VIX', value: '—', updateMode: 'derived' },
+            { id: 'oil-barrel-price', name: 'Oil Barrel Price', value: '$66.35', period: 'Feb 20, 2026', source: 'WTI crude spot (tradingeconomics.com)', updateMode: 'manual' },
+            { id: 'dow', name: 'Dow', value: '48,804', period: 'Feb 21, 2026', source: 'DJIA closing price', updateMode: 'derived' },
+            { id: 'nasdaq', name: 'Nasdaq', value: '22,627', period: 'Feb 21, 2026', source: 'Nasdaq Composite close', updateMode: 'derived' },
+            { id: 'sp-500', name: 'S&P 500', value: '6,838', period: 'Feb 21, 2026', source: 'S&P 500 closing price', updateMode: 'derived' },
+            { id: 'vix', name: 'VIX', value: '19.09', period: 'Feb 20, 2026', source: 'CBOE VIX close', updateMode: 'derived' },
         ],
     },
 ];
@@ -121,13 +121,19 @@ function createNodeElement(node) {
     <div class="node-content">
       <span class="node-icon">${node.icon}</span>
       <span class="node-title">${node.title}</span>
+      <div class="sub-items-header">
+        <span class="sub-header-name"></span>
+        <span class="sub-header-col">Value</span>
+        <span class="sub-header-col">Period</span>
+      </div>
       <div class="sub-items">
         ${node.subItems
             .map(
                 (si) => `
-          <div class="sub-item">
+          <div class="sub-item" title="Source: ${si.source || '—'}">
             <span class="sub-item-name">${si.name}</span>
             <span class="sub-item-value">${si.value}</span>
+            <span class="sub-item-period">${si.period || '—'}</span>
           </div>
         `
             )
