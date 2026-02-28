@@ -28,7 +28,15 @@
     <div class="nodes-layer" id="nodesLayer"></div>
   </main>
 
-  <script src="relationships.js"></script>
+  <!-- Scenario picker panel -->
+  <aside class="scenario-panel" id="scenarioPanel"></aside>
+
+  <!-- Data layer scripts (order matters — dependencies first) -->
+  <script src="indicators.js"></script>
+  <script src="mechanisms.js"></script>
+  <script src="scenarios.js"></script>
+  <script src="impact-rules.js"></script>
+  <script src="causal-engine.js"></script>
   <script src="app.js"></script>
 </body>
 

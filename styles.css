@@ -420,3 +420,383 @@ body {
     padding: 10px 12px 8px;
   }
 }
+
+/* ===== SCENARIO PANEL ===== */
+.scenario-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  z-index: 50;
+  overflow-y: auto;
+  padding: 16px;
+  background: rgba(10, 10, 22, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scenario-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.scenario-panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.scenario-clear-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-size: 13px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.scenario-clear-btn:hover {
+  background: rgba(255, 100, 100, 0.15);
+  color: #f87171;
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+/* Controls */
+.scenario-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.scenario-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scenario-control-group label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.scenario-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.toggle-btn.active {
+  background: rgba(155, 95, 255, 0.2);
+  border-color: rgba(155, 95, 255, 0.4);
+  color: var(--text-primary);
+}
+
+.scenario-select {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.scenario-select:focus {
+  border-color: rgba(155, 95, 255, 0.4);
+}
+
+.scenario-select option {
+  background: #1a1a2e;
+  color: var(--text-primary);
+}
+
+.scenario-checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  flex-direction: row !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  color: var(--text-secondary) !important;
+  cursor: pointer;
+}
+
+.scenario-checkbox-label input[type="checkbox"] {
+  accent-color: rgb(155, 95, 255);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* Scenario list */
+.scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scenario-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
+.scenario-group-label:first-child {
+  margin-top: 0;
+}
+
+.scenario-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.3;
+}
+
+.scenario-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+.scenario-btn.active {
+  background: rgba(155, 95, 255, 0.12);
+  border-color: rgba(155, 95, 255, 0.35);
+  color: var(--text-primary);
+  box-shadow: 0 0 12px rgba(155, 95, 255, 0.1);
+}
+
+/* ===== SCENARIO RESULTS ===== */
+.scenario-results {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.results-header {
+  margin-bottom: 10px;
+}
+
+.results-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.results-meta {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.2s ease;
+}
+
+.result-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.result-row.impact-up {
+  border-left: 2px solid var(--value-positive);
+}
+
+.result-row.impact-down {
+  border-left: 2px solid var(--value-negative);
+}
+
+.result-row.impact-mixed {
+  border-left: 2px solid var(--exogenous-color, rgb(234, 179, 8));
+}
+
+.result-sign {
+  font-size: 14px;
+  font-weight: 700;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.result-row.impact-up .result-sign {
+  color: var(--value-positive);
+}
+
+.result-row.impact-down .result-sign {
+  color: var(--value-negative);
+}
+
+.result-row.impact-mixed .result-sign {
+  color: rgb(234, 179, 8);
+}
+
+.result-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-strength {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.result-lag {
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 52px;
+  text-align: right;
+}
+
+.result-tooltip {
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: help;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.result-tooltip:hover {
+  opacity: 1;
+}
+
+/* ===== IMPACT BADGES ON INDICATOR CARDS ===== */
+.impact-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.impact-badge.up {
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--value-positive);
+}
+
+.impact-badge.down {
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--value-negative);
+}
+
+.impact-badge.mixed {
+  background: rgba(234, 179, 8, 0.12);
+  color: rgb(234, 179, 8);
+}
+
+/* Highlight sub-item names when impacted */
+.sub-item-name.impact-up {
+  color: var(--value-positive);
+}
+
+.sub-item-name.impact-down {
+  color: var(--value-negative);
+}
+
+.sub-item-name.impact-mixed {
+  color: rgb(234, 179, 8);
+}
+
+/* ===== PANEL RESPONSIVE ===== */
+@media (max-width: 1400px) {
+  .scenario-panel {
+    width: 280px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .scenario-panel {
+    width: 250px;
+    padding: 12px;
+  }
+
+  .scenario-btn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+}

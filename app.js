@@ -1,85 +1,23 @@
-// ===== DATA MODEL =====
+// ===== MACROCAUSAL APP =====
+// Uses the 4-layer hybrid architecture:
+//   L1: indicators.js  — indicator definitions + observations
+//   L2: scenarios.js   — scenario presets
+//   L3: impact-rules.js + mechanisms.js — causal graph
+//   L4: causal-engine.js — deterministic engine
 
-const NODES = [
-    {
-        id: 'policy-instruments',
-        title: 'Policy Instruments',
-        icon: '🏛️',
-        theme: 'policy-instruments',
-        color: [155, 95, 255],
-        subItems: [
-            { id: 'fed-funds-target', name: 'Fed Funds Target', value: '4.25–4.50%', period: 'Jan 28, 2026', source: 'FOMC decision (federalreserve.gov)', updateMode: 'manual', sentiment: 'neutral' },
-            { id: 'qe-qt-pace', name: 'QE/QT Pace', value: 'QT Ended', period: 'Dec 1, 2025', source: 'Fed balance sheet (federalreserve.gov)', updateMode: 'manual', sentiment: 'neutral' },
-            { id: 'forward-guidance', name: 'Forward Guidance', value: 'Hold / Data-dep.', period: 'Jan 28, 2026', source: 'FOMC statement + minutes', updateMode: 'manual', sentiment: 'neutral' },
-        ],
-    },
-    {
-        id: 'financial',
-        title: 'Financial Conditions',
-        icon: '📊',
-        theme: 'financial',
-        color: [45, 212, 191],
-        subItems: [
-            { id: 'front-end-yields-2y', name: 'Front-end Yields (2Y)', value: '3.48%', period: 'Feb 20, 2026', source: 'U.S. Treasury 2Y yield', updateMode: 'derived', sentiment: 'neutral' },
-            { id: 'long-end-yields-10y', name: 'Long-end Yields (10Y)', value: '4.08%', period: 'Feb 20, 2026', source: 'U.S. Treasury 10Y yield', updateMode: 'derived', sentiment: 'neutral' },
-            { id: 'mortgage-rates', name: 'Mortgage Rates', value: '6.01%', period: 'Feb 19, 2026', source: 'Freddie Mac PMMS 30-yr fixed', updateMode: 'derived', sentiment: 'neutral' },
-        ],
-    },
-    {
-        id: 'real-economy',
-        title: 'Real Economy',
-        icon: '📈',
-        theme: 'real-economy',
-        color: [96, 165, 250],
-        subItems: [
-            { id: 'housing-starts', name: 'Housing Starts', value: '1.48M SAAR', period: 'Jan 2026', source: 'U.S. Census Bureau', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'consumer-spending', name: 'Consumer Spending', value: '+0.4% MoM', period: 'Dec 2025', source: 'BEA Personal Income & Outlays', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'corporate-borrowing', name: 'Corporate Borrowing', value: 'IG Spread 79bp', period: 'Feb 19, 2026', source: 'ICE BofA IG OAS', updateMode: 'derived', sentiment: 'neutral' },
-            { id: 'gdp-growth', name: 'GDP Growth', value: '+1.4% (Q4)', period: 'Q4 2025', source: 'BEA advance estimate', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'unemployment', name: 'Unemployment', value: '4.3%', period: 'Jan 2026', source: 'BLS Employment Situation', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'job-openings', name: 'Job Openings', value: '6.5M', period: 'Dec 2025', source: 'BLS JOLTS', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'wage-growth', name: 'Wage Growth', value: '+3.7% YoY', period: 'Jan 2026', source: 'BLS Avg Hourly Earnings', updateMode: 'derived', sentiment: 'positive' },
-        ],
-    },
-    {
-        id: 'inflation',
-        title: 'Inflation',
-        icon: '💲',
-        theme: 'inflation',
-        color: [248, 96, 96],
-        subItems: [
-            { id: 'core-cpi', name: 'Core CPI', value: '+2.5% YoY', period: 'Jan 2026', source: 'BLS CPI less food & energy', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'core-ppi', name: 'Core PPI', value: '+3.3% YoY', period: 'Dec 2025', source: 'BLS PPI less food & energy', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'headline-cpi', name: 'Headline CPI', value: '+2.4% YoY', period: 'Jan 2026', source: 'BLS CPI (bls.gov)', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'headline-ppi', name: 'Headline PPI', value: '+3.0% YoY', period: 'Dec 2025', source: 'BLS PPI Final Demand', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'pce', name: 'PCE', value: '+2.9% YoY', period: 'Dec 2025', source: 'BEA PCE Price Index', updateMode: 'derived', sentiment: 'negative' },
-            { id: 'core-pce', name: 'Core PCE', value: '+3.0% YoY', period: 'Dec 2025', source: 'BEA Core PCE Price Index', updateMode: 'derived', sentiment: 'negative' },
-        ],
-    },
-    {
-        id: 'exogenous',
-        title: 'Exogenous Shocks',
-        icon: '⚡',
-        theme: 'exogenous',
-        color: [234, 179, 8],
-        subItems: [
-            { id: 'oil-barrel-price', name: 'Oil Barrel Price', value: '$66.35', period: 'Feb 20, 2026', source: 'WTI crude spot (tradingeconomics.com)', updateMode: 'manual', sentiment: 'neutral' },
-            { id: 'dow', name: 'Dow', value: '48,804', period: 'Feb 21, 2026', source: 'DJIA closing price', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'nasdaq', name: 'Nasdaq', value: '22,627', period: 'Feb 21, 2026', source: 'Nasdaq Composite close', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'sp-500', name: 'S&P 500', value: '6,838', period: 'Feb 21, 2026', source: 'S&P 500 closing price', updateMode: 'derived', sentiment: 'positive' },
-            { id: 'vix', name: 'VIX', value: '19.09', period: 'Feb 20, 2026', source: 'CBOE VIX close', updateMode: 'derived', sentiment: 'neutral' },
-        ],
-    },
-];
+// ===== STATE =====
 
+let NODES = [];
 const EDGES = [];
+let selectedNodeId = null;
+let activeScenarioResult = null;
 
 // ===== LAYOUT =====
 
 function getCanvasCenter() {
     return {
         x: window.innerWidth / 2,
-        y: window.innerHeight / 2 + 10, // slight offset for top bar
+        y: window.innerHeight / 2 + 10,
     };
 }
 
@@ -92,7 +30,6 @@ function getNodePositions() {
     const center = getCanvasCenter();
     const radius = getRingRadius();
     const count = NODES.length;
-    // Start from top (−90°), go clockwise
     const startAngle = -90;
 
     return NODES.map((node, i) => {
@@ -108,6 +45,11 @@ function getNodePositions() {
 }
 
 // ===== NODE RENDERING =====
+
+function getImpactForIndicator(indicatorId) {
+    if (!activeScenarioResult) return null;
+    return activeScenarioResult.impacts.find((imp) => imp.targetIndicatorId === indicatorId) || null;
+}
 
 function createNodeElement(node) {
     const el = document.createElement('div');
@@ -128,13 +70,18 @@ function createNodeElement(node) {
         <span class="sub-header-col">Value</span>
         <span class="sub-header-col">Period</span>
         ${node.subItems
-            .map(
-                (si) => `
-          <span class="sub-item-name" title="Source: ${si.source || '—'}">${si.name}</span>
+            .map((si) => {
+                const impact = getImpactForIndicator(si.id);
+                const impactClass = impact ? `impact-${impact.sign}` : '';
+                const impactBadge = impact
+                    ? `<span class="impact-badge ${impact.sign}" title="${impact.explanationShort}">${getSignSymbol(impact.sign)} ${getStrengthBar(impact.strength)}</span>`
+                    : '';
+                return `
+          <span class="sub-item-name ${impactClass}" title="Source: ${si.source || '—'}">${si.name}${impactBadge}</span>
           <span class="sub-item-value ${si.sentiment || 'neutral'}">${si.value}</span>
           <span class="sub-item-period">${si.period || '—'}</span>
-        `
-            )
+        `;
+            })
             .join('')}
       </div>
     </div>
@@ -168,16 +115,10 @@ function getNodeCenter(nodeId) {
 function getNodeRadius() {
     const rootStyles = getComputedStyle(document.documentElement);
     const cardWidth = parseInt(rootStyles.getPropertyValue('--card-width')) || 280;
-    // Approximate diagonal / 2 for arrow start/end offsets
     return cardWidth / 2 + 10;
 }
 
-/**
- * Calculate a curved arrow path between two nodes.
- * Arrows depart/arrive tangent to the curve for smooth connections.
- */
 function calcArrowPath(fromPos, toPos, nodeRadius) {
-    // 1. First, compute the control point (same logic as before)
     const dx = toPos.x - fromPos.x;
     const dy = toPos.y - fromPos.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
@@ -190,26 +131,22 @@ function calcArrowPath(fromPos, toPos, nodeRadius) {
     const toCenterY = center.y - midY;
     const toCenterDist = Math.sqrt(toCenterX * toCenterX + toCenterY * toCenterY);
 
-    // Curve outward (away from ring center)
     const curvature = -0.5;
     const cpX = midX + (toCenterX / toCenterDist) * dist * curvature;
     const cpY = midY + (toCenterY / toCenterDist) * dist * curvature;
 
-    // 2. Start point: on fromNode edge, in direction toward control point
     const fromToCpX = cpX - fromPos.x;
     const fromToCpY = cpY - fromPos.y;
     const fromToCpDist = Math.sqrt(fromToCpX * fromToCpX + fromToCpY * fromToCpY);
     const startX = fromPos.x + (fromToCpX / fromToCpDist) * (nodeRadius + 4);
     const startY = fromPos.y + (fromToCpY / fromToCpDist) * (nodeRadius + 4);
 
-    // 3. End point: on toNode edge, in direction FROM control point toward toNode
     const cpToToX = toPos.x - cpX;
     const cpToToY = toPos.y - cpY;
     const cpToToDist = Math.sqrt(cpToToX * cpToToX + cpToToY * cpToToY);
     const endX = toPos.x - (cpToToX / cpToToDist) * (nodeRadius + 14);
     const endY = toPos.y - (cpToToY / cpToToDist) * (nodeRadius + 14);
 
-    // 4. Label at the true quadratic bezier midpoint (t=0.5)
     const labelX = 0.25 * startX + 0.5 * cpX + 0.25 * endX;
     const labelY = 0.25 * startY + 0.5 * cpY + 0.25 * endY;
 
@@ -227,7 +164,6 @@ function renderArrows() {
     const defs = svg.querySelector('defs');
     defs.innerHTML = '';
 
-    // Remove old paths and labels
     svg.querySelectorAll('.arrow-path, .flow-particle').forEach((el) => el.remove());
     document.querySelectorAll('.edge-label').forEach((el) => el.remove());
 
@@ -241,7 +177,6 @@ function renderArrows() {
 
         const { path, labelPos } = calcArrowPath(fromPos, toPos, nodeRadius);
 
-        // Gradient
         const gradientId = `grad-${edge.id}`;
         const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
         gradient.id = gradientId;
@@ -261,7 +196,6 @@ function renderArrows() {
         gradient.appendChild(stop2);
         defs.appendChild(gradient);
 
-        // Arrowhead marker
         const markerId = `marker-${edge.id}`;
         const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
         marker.id = markerId;
@@ -278,7 +212,6 @@ function renderArrows() {
         marker.appendChild(markerPath);
         defs.appendChild(marker);
 
-        // Main path
         const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         pathEl.classList.add('arrow-path');
         pathEl.id = `edge-${edge.id}`;
@@ -289,7 +222,6 @@ function renderArrows() {
         pathEl.dataset.to = edge.to;
         svg.appendChild(pathEl);
 
-        // Flow particle (animated dash)
         const flowEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         flowEl.classList.add('flow-particle');
         flowEl.id = `flow-${edge.id}`;
@@ -298,16 +230,13 @@ function renderArrows() {
         flowEl.dataset.from = edge.from;
         flowEl.dataset.to = edge.to;
 
-        // Set up dash for animation
         const pathLength = pathEl.getTotalLength ? pathEl.getTotalLength() : 300;
         flowEl.setAttribute('stroke-dasharray', `${pathLength * 0.15} ${pathLength * 0.85}`);
         flowEl.setAttribute('stroke-dashoffset', pathLength);
         svg.appendChild(flowEl);
 
-        // Animate dash
         animateFlow(flowEl, pathLength);
 
-        // Edge label (HTML overlay)
         const labelEl = document.createElement('div');
         labelEl.className = 'edge-label';
         labelEl.style.left = `${labelPos.x}px`;
@@ -334,10 +263,7 @@ function animateFlow(el, pathLength) {
 
 // ===== INTERACTION =====
 
-let selectedNodeId = null;
-
 function selectNode(nodeId) {
-    // Deselect previous
     document.querySelectorAll('.node.selected').forEach((el) => el.classList.remove('selected'));
     document.querySelectorAll('.arrow-path.highlighted').forEach((el) => el.classList.remove('highlighted'));
     document.querySelectorAll('.flow-particle.active').forEach((el) => el.classList.remove('active'));
@@ -349,18 +275,15 @@ function selectNode(nodeId) {
 
     selectedNodeId = nodeId;
 
-    // Select node
     const nodeEl = document.getElementById(`node-${nodeId}`);
     if (nodeEl) nodeEl.classList.add('selected');
 
-    // Highlight connected edges
     document.querySelectorAll('.arrow-path').forEach((pathEl) => {
         if (pathEl.dataset.from === nodeId || pathEl.dataset.to === nodeId) {
             pathEl.classList.add('highlighted');
         }
     });
 
-    // Activate flow particles on connected edges
     document.querySelectorAll('.flow-particle').forEach((flowEl) => {
         if (flowEl.dataset.from === nodeId || flowEl.dataset.to === nodeId) {
             flowEl.classList.add('active');
@@ -369,7 +292,6 @@ function selectNode(nodeId) {
 }
 
 function initInteractions() {
-    // Node clicks
     document.getElementById('nodesLayer').addEventListener('click', (e) => {
         const node = e.target.closest('.node');
         if (node) {
@@ -378,12 +300,184 @@ function initInteractions() {
         }
     });
 
-    // Background click to deselect
     document.getElementById('canvas').addEventListener('click', (e) => {
-        if (!e.target.closest('.node') && !e.target.closest('.edge-label')) {
+        if (!e.target.closest('.node') && !e.target.closest('.edge-label') && !e.target.closest('.scenario-panel')) {
             selectNode(null);
         }
     });
+}
+
+// ===== SCENARIO PANEL =====
+
+function buildScenarioPanel() {
+    const panel = document.getElementById('scenarioPanel');
+
+    // Group scenarios by shockType
+    const groups = {};
+    SCENARIO_PRESETS.forEach((s) => {
+        if (!groups[s.shockType]) groups[s.shockType] = [];
+        groups[s.shockType].push(s);
+    });
+
+    let html = `
+        <div class="scenario-panel-header">
+            <span class="scenario-panel-title">📋 Scenarios</span>
+            <button class="scenario-clear-btn" id="clearScenario" title="Clear scenario">✕</button>
+        </div>
+        <div class="scenario-controls">
+            <div class="scenario-control-group">
+                <label>Surprise Size</label>
+                <div class="scenario-toggle" id="surpriseSizeToggle">
+                    <button data-value="1" class="toggle-btn">S</button>
+                    <button data-value="2" class="toggle-btn active">M</button>
+                    <button data-value="3" class="toggle-btn">L</button>
+                </div>
+            </div>
+            <div class="scenario-control-group">
+                <label>Regime</label>
+                <select id="regimeSelect" class="scenario-select">
+                    <option value="soft_landing" selected>Soft Landing</option>
+                    <option value="late_cycle">Late Cycle</option>
+                    <option value="recession_risk">Recession Risk</option>
+                    <option value="inflation_scare">Inflation Scare</option>
+                    <option value="financial_stress">Financial Stress</option>
+                </select>
+            </div>
+            <div class="scenario-control-group">
+                <label class="scenario-checkbox-label">
+                    <input type="checkbox" id="pricedInCheck"> Already priced in
+                </label>
+            </div>
+        </div>
+        <div class="scenario-list">
+    `;
+
+    for (const [type, scenarios] of Object.entries(groups)) {
+        const typeLabel = SHOCK_TYPE_LABELS[type] || type;
+        html += `<div class="scenario-group-label">${typeLabel}</div>`;
+        scenarios.forEach((s) => {
+            html += `
+                <button class="scenario-btn" data-scenario-id="${s.id}" title="${s.descriptionShort}">
+                    ${s.title}
+                </button>
+            `;
+        });
+    }
+
+    html += '</div>';
+
+    // Impact results area
+    html += '<div class="scenario-results" id="scenarioResults"></div>';
+
+    panel.innerHTML = html;
+
+    // Wire up events
+    panel.querySelectorAll('.scenario-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            panel.querySelectorAll('.scenario-btn').forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            executeScenario(btn.dataset.scenarioId);
+        });
+    });
+
+    document.getElementById('clearScenario').addEventListener('click', clearScenario);
+
+    // Surprise size toggle
+    document.getElementById('surpriseSizeToggle').addEventListener('click', (e) => {
+        const btn = e.target.closest('.toggle-btn');
+        if (!btn) return;
+        document.querySelectorAll('#surpriseSizeToggle .toggle-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        rerunActiveScenario();
+    });
+
+    // Regime select
+    document.getElementById('regimeSelect').addEventListener('change', rerunActiveScenario);
+
+    // Priced-in checkbox
+    document.getElementById('pricedInCheck').addEventListener('change', rerunActiveScenario);
+}
+
+function getScenarioContext(scenarioId) {
+    const surpriseSize = parseInt(
+        document.querySelector('#surpriseSizeToggle .toggle-btn.active')?.dataset.value || '2'
+    );
+    const regime = document.getElementById('regimeSelect')?.value || 'soft_landing';
+    const marketAlreadyPricedIn = document.getElementById('pricedInCheck')?.checked || false;
+
+    return {
+        scenarioId,
+        surpriseSize,
+        regime,
+        marketAlreadyPricedIn,
+        persistence: 'one_off',
+    };
+}
+
+function executeScenario(scenarioId) {
+    const context = getScenarioContext(scenarioId);
+    activeScenarioResult = runScenario(context);
+    renderNodes();
+    renderArrows();
+    renderScenarioResults();
+}
+
+function rerunActiveScenario() {
+    const activeBtn = document.querySelector('.scenario-btn.active');
+    if (activeBtn) {
+        executeScenario(activeBtn.dataset.scenarioId);
+    }
+}
+
+function clearScenario() {
+    activeScenarioResult = null;
+    document.querySelectorAll('.scenario-btn').forEach((b) => b.classList.remove('active'));
+    document.getElementById('scenarioResults').innerHTML = '';
+    renderNodes();
+    renderArrows();
+}
+
+function renderScenarioResults() {
+    const container = document.getElementById('scenarioResults');
+    if (!activeScenarioResult || activeScenarioResult.impacts.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
+    const ctx = activeScenarioResult.context;
+
+    let html = `
+        <div class="results-header">
+            <div class="results-title">${preset.title}</div>
+            <div class="results-meta">
+                Size: ${'●'.repeat(ctx.surpriseSize)}${'○'.repeat(3 - ctx.surpriseSize)} · 
+                Regime: ${ctx.regime.replace(/_/g, ' ')}
+                ${ctx.marketAlreadyPricedIn ? ' · Priced in' : ''}
+            </div>
+        </div>
+        <div class="results-list">
+    `;
+
+    activeScenarioResult.impacts.forEach((impact) => {
+        const indicator = INDICATORS[impact.targetIndicatorId];
+        const name = indicator ? indicator.name : impact.targetIndicatorId;
+        const mech = getMechanism(impact.mechanism);
+        const mechName = mech ? mech.name : impact.mechanism;
+
+        html += `
+            <div class="result-row impact-${impact.sign}">
+                <span class="result-sign">${getSignSymbol(impact.sign)}</span>
+                <span class="result-name">${name}</span>
+                <span class="result-strength">${getStrengthBar(impact.strength)}</span>
+                <span class="result-lag">${impact.lag}</span>
+                <span class="result-tooltip" title="${impact.explanationShort}\n\nMechanism: ${mechName}\nConfidence: ${impact.confidence}/5">ⓘ</span>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 // ===== TIMESTAMP =====
@@ -405,10 +499,14 @@ function updateTimestamp() {
 // ===== INIT =====
 
 function init() {
+    // Build NODES from indicators.js data
+    NODES = buildNodes();
+
     updateTimestamp();
     renderNodes();
     renderArrows();
     initInteractions();
+    buildScenarioPanel();
 }
 
 // Re-render on resize
