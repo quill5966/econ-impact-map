@@ -241,6 +241,11 @@ body {
   width: 100%;
 }
 
+/* 4-column grid when a scenario is active */
+.sub-items.has-impact-col {
+  grid-template-columns: 1fr auto auto auto;
+}
+
 .node:hover .sub-items,
 .node.selected .sub-items {
   opacity: 1;
@@ -289,6 +294,35 @@ body {
   text-align: right;
   line-height: 1.5;
   white-space: nowrap;
+}
+
+/* HEADLINE IMPACT column */
+.impact-col-header {
+  color: rgba(155, 95, 255, 0.7);
+  font-size: 8px;
+  letter-spacing: 0.4px;
+}
+
+.sub-item-impact {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: right;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.sub-item-impact.impact-up {
+  color: var(--value-positive);
+}
+
+.sub-item-impact.impact-down {
+  color: var(--value-negative);
+}
+
+.sub-item-impact.impact-mixed {
+  color: rgb(234, 179, 8);
 }
 
 /* ===== EDGE LABELS ===== */
@@ -362,6 +396,31 @@ body {
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
+}
+
+/* ===== IMPACT PROPAGATION ARROWS ===== */
+.impact-arrow {
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.impact-lag-label {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+  transform: translate(-50%, -50%);
+}
+
+.impact-lag-text {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(6, 6, 15, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ===== NODE COLOR VARIANTS ===== */

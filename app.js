@@ -58,6 +58,8 @@ function createNodeElement(node) {
     el.dataset.theme = node.theme;
     el.dataset.nodeId = node.id;
 
+    const hasActiveScenario = !!activeScenarioResult;
+
     el.innerHTML = `
     <div class="selection-ring"></div>
     <div class="node-content">
@@ -65,21 +67,25 @@ function createNodeElement(node) {
         <span class="node-icon">${node.icon}</span>
         <span class="node-title">${node.title}</span>
       </div>
-      <div class="sub-items">
+      <div class="sub-items ${hasActiveScenario ? 'has-impact-col' : ''}">
         <span class="sub-header-name"></span>
         <span class="sub-header-col">Value</span>
         <span class="sub-header-col">Period</span>
+        ${hasActiveScenario ? '<span class="sub-header-col impact-col-header">Impact</span>' : ''}
         ${node.subItems
             .map((si) => {
                 const impact = getImpactForIndicator(si.id);
                 const impactClass = impact ? `impact-${impact.sign}` : '';
-                const impactBadge = impact
-                    ? `<span class="impact-badge ${impact.sign}" title="${impact.explanationShort}">${getSignSymbol(impact.sign)} ${getStrengthBar(impact.strength)}</span>`
+                const impactCell = hasActiveScenario
+                    ? (impact
+                        ? `<span class="sub-item-impact impact-${impact.sign}" title="${impact.explanationShort}">${getSignSymbol(impact.sign)} ${getStrengthBar(impact.strength)}</span>`
+                        : '<span class="sub-item-impact">—</span>')
                     : '';
                 return `
-          <span class="sub-item-name ${impactClass}" title="Source: ${si.source || '—'}">${si.name}${impactBadge}</span>
+          <span class="sub-item-name ${impactClass}" title="Source: ${si.source || '—'}">${si.name}</span>
           <span class="sub-item-value ${si.sentiment || 'neutral'}">${si.value}</span>
           <span class="sub-item-period">${si.period || '—'}</span>
+          ${impactCell}
         `;
             })
             .join('')}
@@ -243,6 +249,165 @@ function renderArrows() {
         labelEl.style.top = `${labelPos.y}px`;
         labelEl.innerHTML = `<span class="edge-label-text">${edge.label}</span>`;
         document.getElementById('canvas').appendChild(labelEl);
+    });
+}
+
+// ===== IMPACT PROPAGATION ARROWS =====
+
+// Dash patterns per lag bucket (visually differentiates timing)
+const LAG_DASH_PATTERNS = {
+    immediate: '',               // solid
+    short: '10,5',           // dashed
+    medium: '4,6',            // dotted
+    long: '2,8',            // sparse dots
+};
+
+const LAG_COLORS = {
+    immediate: '#4ade80',        // green
+    short: '#60a5fa',        // blue
+    medium: '#eab308',        // gold
+    long: '#f87171',        // red
+};
+
+function getCategoryForIndicator(indicatorId) {
+    const ind = INDICATORS[indicatorId];
+    return ind ? ind.category : null;
+}
+
+function renderImpactArrows() {
+    const svg = document.getElementById('arrowsSvg');
+
+    // Remove previous impact arrows and labels
+    svg.querySelectorAll('.impact-arrow').forEach((el) => el.remove());
+    document.querySelectorAll('.impact-lag-label').forEach((el) => el.remove());
+
+    if (!activeScenarioResult || activeScenarioResult.impacts.length === 0) return;
+
+    const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
+    if (!preset) return;
+
+    const sourceCategory = getCategoryForIndicator(preset.primaryShockNode);
+    const sourceNodeId = sourceCategory;
+    const nodeRadius = getNodeRadius();
+    const defs = svg.querySelector('defs');
+    const center = getCanvasCenter();
+
+    // Collect unique target theme nodes (skip self)
+    const targetCategories = new Map();
+    activeScenarioResult.impacts.forEach((impact) => {
+        const cat = getCategoryForIndicator(impact.targetIndicatorId);
+        if (!cat || cat === sourceCategory) return;
+        const lagOrder = { immediate: 0, short: 1, medium: 2, long: 3 };
+        const existing = targetCategories.get(cat);
+        if (!existing || lagOrder[impact.lag] < lagOrder[existing.lag]) {
+            targetCategories.set(cat, { lag: impact.lag, sign: impact.sign });
+        }
+    });
+
+    // Display labels for lag buckets (no icons)
+    const lagDisplayLabels = {
+        immediate: 'minutes to days',
+        short: 'days to weeks',
+        medium: 'months',
+        long: 'months',
+    };
+
+    // Draw a unique arrow for each target node with per-arrow curvature offset
+    let arrowIndex = 0;
+    const totalArrows = targetCategories.size;
+
+    targetCategories.forEach(({ lag, sign }, targetNodeId) => {
+        const fromPos = getNodeCenter(sourceNodeId);
+        const toPos = getNodeCenter(targetNodeId);
+
+        if (fromPos.x === 0 && fromPos.y === 0) return;
+        if (toPos.x === 0 && toPos.y === 0) return;
+
+        // Unique curvature per arrow so they don't overlap
+        const baseCurvature = -0.35;
+        const curvatureOffset = totalArrows > 1
+            ? (arrowIndex / (totalArrows - 1) - 0.5) * 0.3
+            : 0;
+        const curvature = baseCurvature + curvatureOffset;
+
+        // Custom path calculation with tight endpoint
+        const dx = toPos.x - fromPos.x;
+        const dy = toPos.y - fromPos.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        const midX = (fromPos.x + toPos.x) / 2;
+        const midY = (fromPos.y + toPos.y) / 2;
+        const toCenterX = center.x - midX;
+        const toCenterY = center.y - midY;
+        const toCenterDist = Math.sqrt(toCenterX * toCenterX + toCenterY * toCenterY) || 1;
+
+        const cpX = midX + (toCenterX / toCenterDist) * dist * curvature;
+        const cpY = midY + (toCenterY / toCenterDist) * dist * curvature;
+
+        // Start: offset from source node center
+        const fromToCpX = cpX - fromPos.x;
+        const fromToCpY = cpY - fromPos.y;
+        const fromToCpDist = Math.sqrt(fromToCpX * fromToCpX + fromToCpY * fromToCpY) || 1;
+        const startX = fromPos.x + (fromToCpX / fromToCpDist) * (nodeRadius + 2);
+        const startY = fromPos.y + (fromToCpY / fromToCpDist) * (nodeRadius + 2);
+
+        // End: very close to target node border
+        const cpToToX = toPos.x - cpX;
+        const cpToToY = toPos.y - cpY;
+        const cpToToDist = Math.sqrt(cpToToX * cpToToX + cpToToY * cpToToY) || 1;
+        const endX = toPos.x - (cpToToX / cpToToDist) * (nodeRadius + 2);
+        const endY = toPos.y - (cpToToY / cpToToDist) * (nodeRadius + 2);
+
+        // Label at midpoint of curve
+        const labelX = 0.25 * startX + 0.5 * cpX + 0.25 * endX;
+        const labelY = 0.25 * startY + 0.5 * cpY + 0.25 * endY;
+
+        const pathD = `M ${startX} ${startY} Q ${cpX} ${cpY} ${endX} ${endY}`;
+        const color = LAG_COLORS[lag] || '#9b5fff';
+        const dashPattern = LAG_DASH_PATTERNS[lag] || '';
+
+        // Arrowhead marker
+        const markerId = `impact-marker-${sourceNodeId}-${targetNodeId}`;
+        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+        marker.id = markerId;
+        marker.setAttribute('markerWidth', '10');
+        marker.setAttribute('markerHeight', '8');
+        marker.setAttribute('refX', '9');
+        marker.setAttribute('refY', '4');
+        marker.setAttribute('orient', 'auto');
+        const markerPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        markerPath.setAttribute('d', 'M 0 0 L 10 4 L 0 8 L 3 4 Z');
+        markerPath.setAttribute('fill', color);
+        markerPath.setAttribute('fill-opacity', '0.85');
+        marker.appendChild(markerPath);
+        defs.appendChild(marker);
+
+        // Arrow path
+        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pathEl.classList.add('impact-arrow');
+        pathEl.setAttribute('d', pathD);
+        pathEl.setAttribute('stroke', color);
+        pathEl.setAttribute('stroke-width', '2.5');
+        pathEl.setAttribute('fill', 'none');
+        pathEl.setAttribute('stroke-linecap', 'round');
+        pathEl.setAttribute('marker-end', `url(#${markerId})`);
+        pathEl.setAttribute('opacity', '0.8');
+        if (dashPattern) {
+            pathEl.setAttribute('stroke-dasharray', dashPattern);
+        }
+        pathEl.dataset.lag = lag;
+        svg.appendChild(pathEl);
+
+        // Lag label on the arrow (no icons)
+        const labelEl = document.createElement('div');
+        labelEl.className = 'impact-lag-label';
+        labelEl.dataset.lag = lag;
+        labelEl.style.left = `${labelX}px`;
+        labelEl.style.top = `${labelY}px`;
+        labelEl.innerHTML = `<span class="impact-lag-text" style="color:${color}">${lagDisplayLabels[lag] || lag}</span>`;
+        document.getElementById('canvas').appendChild(labelEl);
+
+        arrowIndex++;
     });
 }
 
@@ -419,6 +584,7 @@ function executeScenario(scenarioId) {
     activeScenarioResult = runScenario(context);
     renderNodes();
     renderArrows();
+    renderImpactArrows();
     renderScenarioResults();
 }
 
@@ -435,6 +601,7 @@ function clearScenario() {
     document.getElementById('scenarioResults').innerHTML = '';
     renderNodes();
     renderArrows();
+    renderImpactArrows();
 }
 
 function renderScenarioResults() {
@@ -464,13 +631,14 @@ function renderScenarioResults() {
         const name = indicator ? indicator.name : impact.targetIndicatorId;
         const mech = getMechanism(impact.mechanism);
         const mechName = mech ? mech.name : impact.mechanism;
+        const lagDisplay = { immediate: 'min–days', short: 'days–wks', medium: 'months', long: 'months' }[impact.lag] || impact.lag;
 
         html += `
             <div class="result-row impact-${impact.sign}">
                 <span class="result-sign">${getSignSymbol(impact.sign)}</span>
                 <span class="result-name">${name}</span>
                 <span class="result-strength">${getStrengthBar(impact.strength)}</span>
-                <span class="result-lag">${impact.lag}</span>
+                <span class="result-lag">${lagDisplay}</span>
                 <span class="result-tooltip" title="${impact.explanationShort}\n\nMechanism: ${mechName}\nConfidence: ${impact.confidence}/5">ⓘ</span>
             </div>
         `;
