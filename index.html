@@ -16,6 +16,9 @@
     <time class="timestamp" id="timestamp"></time>
   </header>
 
+  <!-- Scenario banner (replaces the old sidebar) -->
+  <div class="scenario-banner" id="scenarioBanner"></div>
+
   <main class="canvas" id="canvas">
     <!-- SVG layer for arrows (rendered by JS) -->
     <svg class="arrows-layer" id="arrowsSvg">
@@ -27,9 +30,6 @@
     <!-- Nodes are injected by JS into this container -->
     <div class="nodes-layer" id="nodesLayer"></div>
   </main>
-
-  <!-- Scenario picker panel -->
-  <aside class="scenario-panel" id="scenarioPanel"></aside>
 
   <!-- Data layer scripts (order matters — dependencies first) -->
   <script src="indicators.js"></script>

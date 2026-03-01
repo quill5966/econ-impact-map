@@ -15,9 +15,11 @@ let activeScenarioResult = null;
 // ===== LAYOUT =====
 
 function getCanvasCenter() {
+    // Offset for top-bar (56px) + scenario banner (48px)
+    const topOffset = 104;
     return {
         x: window.innerWidth / 2,
-        y: window.innerHeight / 2 + 10,
+        y: (window.innerHeight + topOffset) / 2,
     };
 }
 
@@ -466,16 +468,43 @@ function initInteractions() {
     });
 
     document.getElementById('canvas').addEventListener('click', (e) => {
-        if (!e.target.closest('.node') && !e.target.closest('.edge-label') && !e.target.closest('.scenario-panel')) {
+        if (!e.target.closest('.node') && !e.target.closest('.edge-label') && !e.target.closest('.scenario-banner') && !e.target.closest('.scenario-dropdown')) {
             selectNode(null);
         }
     });
 }
 
-// ===== SCENARIO PANEL =====
+// ===== SCENARIO BANNER =====
 
-function buildScenarioPanel() {
-    const panel = document.getElementById('scenarioPanel');
+let previousScenarioState = null; // cached for undo
+let dropdownOpen = false;
+
+// Get the formatted date string for the default banner state
+function getFormattedDate() {
+    const now = new Date();
+    return now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Build the scenario dropdown HTML (scenario list + controls)
+function buildScenarioDropdown() {
+    // Create dropdown container (appended to body)
+    let dropdown = document.getElementById('scenarioDropdown');
+    if (!dropdown) {
+        dropdown = document.createElement('div');
+        dropdown.className = 'scenario-dropdown';
+        dropdown.id = 'scenarioDropdown';
+        document.body.appendChild(dropdown);
+    }
+
+    // Create backdrop
+    let backdrop = document.getElementById('scenarioDropdownBackdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.className = 'scenario-dropdown-backdrop';
+        backdrop.id = 'scenarioDropdownBackdrop';
+        document.body.appendChild(backdrop);
+        backdrop.addEventListener('click', () => toggleScenarioDropdown(false));
+    }
 
     // Group scenarios by shockType
     const groups = {};
@@ -484,68 +513,61 @@ function buildScenarioPanel() {
         groups[s.shockType].push(s);
     });
 
-    let html = `
-        <div class="scenario-panel-header">
-            <span class="scenario-panel-title">📋 Scenarios</span>
-            <button class="scenario-clear-btn" id="clearScenario" title="Clear scenario">✕</button>
-        </div>
-        <div class="scenario-controls">
-            <div class="scenario-control-group">
-                <label>Surprise Size</label>
-                <div class="scenario-toggle" id="surpriseSizeToggle">
-                    <button data-value="1" class="toggle-btn">S</button>
-                    <button data-value="2" class="toggle-btn active">M</button>
-                    <button data-value="3" class="toggle-btn">L</button>
-                </div>
-            </div>
-            <div class="scenario-control-group">
-                <label>Regime</label>
-                <select id="regimeSelect" class="scenario-select">
-                    <option value="soft_landing" selected>Soft Landing</option>
-                    <option value="late_cycle">Late Cycle</option>
-                    <option value="recession_risk">Recession Risk</option>
-                    <option value="inflation_scare">Inflation Scare</option>
-                    <option value="financial_stress">Financial Stress</option>
-                </select>
-            </div>
-            <div class="scenario-control-group">
-                <label class="scenario-checkbox-label">
-                    <input type="checkbox" id="pricedInCheck"> Already priced in
-                </label>
-            </div>
-        </div>
-        <div class="scenario-list">
-    `;
-
+    let scenariosHtml = '';
     for (const [type, scenarios] of Object.entries(groups)) {
         const typeLabel = SHOCK_TYPE_LABELS[type] || type;
-        html += `<div class="scenario-group-label">${typeLabel}</div>`;
+        scenariosHtml += `<div class="dropdown-group-label">${typeLabel}</div>`;
         scenarios.forEach((s) => {
-            html += `
-                <button class="scenario-btn" data-scenario-id="${s.id}" title="${s.descriptionShort}">
+            scenariosHtml += `
+                <button class="dropdown-scenario-btn" data-scenario-id="${s.id}" title="${s.descriptionShort}">
                     ${s.title}
                 </button>
             `;
         });
     }
 
-    html += '</div>';
+    dropdown.innerHTML = `
+        <div class="dropdown-inner">
+            <div class="dropdown-scenarios">
+                ${scenariosHtml}
+            </div>
+            <div class="dropdown-controls">
+                <div class="dropdown-control-group">
+                    <label>Surprise Size</label>
+                    <div class="scenario-toggle" id="surpriseSizeToggle">
+                        <button data-value="1" class="toggle-btn">S</button>
+                        <button data-value="2" class="toggle-btn active">M</button>
+                        <button data-value="3" class="toggle-btn">L</button>
+                    </div>
+                </div>
+                <div class="dropdown-control-group">
+                    <label>Regime</label>
+                    <select id="regimeSelect" class="scenario-select">
+                        <option value="soft_landing" selected>Soft Landing</option>
+                        <option value="late_cycle">Late Cycle</option>
+                        <option value="recession_risk">Recession Risk</option>
+                        <option value="inflation_scare">Inflation Scare</option>
+                        <option value="financial_stress">Financial Stress</option>
+                    </select>
+                </div>
+                <div class="dropdown-control-group">
+                    <label class="scenario-checkbox-label">
+                        <input type="checkbox" id="pricedInCheck"> Already priced in
+                    </label>
+                </div>
+            </div>
+        </div>
+    `;
 
-    // Impact results area
-    html += '<div class="scenario-results" id="scenarioResults"></div>';
-
-    panel.innerHTML = html;
-
-    // Wire up events
-    panel.querySelectorAll('.scenario-btn').forEach((btn) => {
+    // Wire up scenario buttons
+    dropdown.querySelectorAll('.dropdown-scenario-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-            panel.querySelectorAll('.scenario-btn').forEach((b) => b.classList.remove('active'));
+            dropdown.querySelectorAll('.dropdown-scenario-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
             executeScenario(btn.dataset.scenarioId);
+            toggleScenarioDropdown(false);
         });
     });
-
-    document.getElementById('clearScenario').addEventListener('click', clearScenario);
 
     // Surprise size toggle
     document.getElementById('surpriseSizeToggle').addEventListener('click', (e) => {
@@ -561,6 +583,97 @@ function buildScenarioPanel() {
 
     // Priced-in checkbox
     document.getElementById('pricedInCheck').addEventListener('change', rerunActiveScenario);
+}
+
+function toggleScenarioDropdown(forceState) {
+    const dropdown = document.getElementById('scenarioDropdown');
+    const backdrop = document.getElementById('scenarioDropdownBackdrop');
+    if (!dropdown) return;
+
+    dropdownOpen = forceState !== undefined ? forceState : !dropdownOpen;
+
+    if (dropdownOpen) {
+        dropdown.classList.add('open');
+        backdrop.classList.add('visible');
+    } else {
+        dropdown.classList.remove('open');
+        backdrop.classList.remove('visible');
+    }
+}
+
+// Render the scenario banner based on current state
+function renderBanner() {
+    const banner = document.getElementById('scenarioBanner');
+
+    if (activeScenarioResult) {
+        // ── State 2: Active scenario ──
+        const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
+        const ctx = activeScenarioResult.context;
+        const dirColor = DIRECTION_COLORS[preset.defaultShockDirection] || { accent: '#9b5fff', sentiment: 'neutral' };
+        const sizeLabel = ['S', 'M', 'L'][ctx.surpriseSize - 1] || 'M';
+        const regimeLabel = ctx.regime.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+        const summary = preset.plainEnglishSummary || preset.descriptionShort;
+
+        banner.className = 'scenario-banner active expandable';
+        banner.style.setProperty('--banner-accent', dirColor.accent);
+
+        banner.innerHTML = `
+            <div class="banner-content">
+                <div class="banner-left">
+                    <div class="banner-main-row">
+                        <span class="banner-dot"></span>
+                        <span class="banner-title">${preset.title}</span>
+                        <span class="banner-meta">
+                            Size: ${sizeLabel}
+                            <span class="banner-meta-sep">·</span>
+                            Regime: ${regimeLabel}
+                            ${ctx.marketAlreadyPricedIn ? '<span class="banner-meta-sep">·</span> Already Priced In' : ''}
+                        </span>
+                    </div>
+                    <div class="banner-summary">${summary}</div>
+                </div>
+                <button class="banner-btn banner-btn-secondary" id="resetScenarioBtn">✕ Reset</button>
+            </div>
+        `;
+
+        document.getElementById('resetScenarioBtn').addEventListener('click', resetScenario);
+
+    } else if (previousScenarioState) {
+        // ── State 3: Reset / cleared with undo available ──
+        banner.className = 'scenario-banner';
+        banner.style.removeProperty('--banner-accent');
+
+        banner.innerHTML = `
+            <div class="banner-reset">
+                <span class="banner-reset-text">Scenario cleared.</span>
+                <button class="banner-btn banner-btn-primary" id="runAnotherBtn">+ Run another scenario</button>
+                <button class="banner-btn banner-btn-undo" id="undoResetBtn">↩ Undo</button>
+            </div>
+        `;
+
+        document.getElementById('runAnotherBtn').addEventListener('click', () => {
+            previousScenarioState = null;
+            renderBanner();
+            toggleScenarioDropdown(true);
+        });
+
+        document.getElementById('undoResetBtn').addEventListener('click', undoReset);
+
+    } else {
+        // ── State 1: Default / no scenario ──
+        banner.className = 'scenario-banner';
+        banner.style.removeProperty('--banner-accent');
+
+        banner.innerHTML = `
+            <div class="banner-default">
+                <span class="banner-default-icon">📊</span>
+                <span class="banner-default-text">Showing current economic conditions as of ${getFormattedDate()}</span>
+                <button class="banner-btn banner-btn-primary" id="runScenarioBtn">+ Run a Scenario</button>
+            </div>
+        `;
+
+        document.getElementById('runScenarioBtn').addEventListener('click', () => toggleScenarioDropdown(true));
+    }
 }
 
 function getScenarioContext(scenarioId) {
@@ -580,72 +693,57 @@ function getScenarioContext(scenarioId) {
 }
 
 function executeScenario(scenarioId) {
+    // Clear undo state when selecting a new scenario
+    previousScenarioState = null;
+
     const context = getScenarioContext(scenarioId);
     activeScenarioResult = runScenario(context);
     renderNodes();
     renderArrows();
     renderImpactArrows();
-    renderScenarioResults();
+    renderBanner();
 }
 
 function rerunActiveScenario() {
-    const activeBtn = document.querySelector('.scenario-btn.active');
-    if (activeBtn) {
-        executeScenario(activeBtn.dataset.scenarioId);
-    }
-}
-
-function clearScenario() {
-    activeScenarioResult = null;
-    document.querySelectorAll('.scenario-btn').forEach((b) => b.classList.remove('active'));
-    document.getElementById('scenarioResults').innerHTML = '';
+    if (!activeScenarioResult) return;
+    const scenarioId = activeScenarioResult.context.scenarioId;
+    const context = getScenarioContext(scenarioId);
+    activeScenarioResult = runScenario(context);
     renderNodes();
     renderArrows();
     renderImpactArrows();
+    renderBanner();
 }
 
-function renderScenarioResults() {
-    const container = document.getElementById('scenarioResults');
-    if (!activeScenarioResult || activeScenarioResult.impacts.length === 0) {
-        container.innerHTML = '';
-        return;
-    }
+function resetScenario() {
+    // Stash full result for undo (preserves future LLM-generated explanations)
+    previousScenarioState = activeScenarioResult;
+    activeScenarioResult = null;
 
-    const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
-    const ctx = activeScenarioResult.context;
+    // Deselect scenario button in dropdown
+    document.querySelectorAll('.dropdown-scenario-btn').forEach((b) => b.classList.remove('active'));
 
-    let html = `
-        <div class="results-header">
-            <div class="results-title">${preset.title}</div>
-            <div class="results-meta">
-                Size: ${'●'.repeat(ctx.surpriseSize)}${'○'.repeat(3 - ctx.surpriseSize)} · 
-                Regime: ${ctx.regime.replace(/_/g, ' ')}
-                ${ctx.marketAlreadyPricedIn ? ' · Priced in' : ''}
-            </div>
-        </div>
-        <div class="results-list">
-    `;
+    renderNodes();
+    renderArrows();
+    renderImpactArrows();
+    renderBanner();
+}
 
-    activeScenarioResult.impacts.forEach((impact) => {
-        const indicator = INDICATORS[impact.targetIndicatorId];
-        const name = indicator ? indicator.name : impact.targetIndicatorId;
-        const mech = getMechanism(impact.mechanism);
-        const mechName = mech ? mech.name : impact.mechanism;
-        const lagDisplay = { immediate: 'min–days', short: 'days–wks', medium: 'months', long: 'months' }[impact.lag] || impact.lag;
+function undoReset() {
+    if (!previousScenarioState) return;
+    activeScenarioResult = previousScenarioState;
+    previousScenarioState = null;
 
-        html += `
-            <div class="result-row impact-${impact.sign}">
-                <span class="result-sign">${getSignSymbol(impact.sign)}</span>
-                <span class="result-name">${name}</span>
-                <span class="result-strength">${getStrengthBar(impact.strength)}</span>
-                <span class="result-lag">${lagDisplay}</span>
-                <span class="result-tooltip" title="${impact.explanationShort}\n\nMechanism: ${mechName}\nConfidence: ${impact.confidence}/5">ⓘ</span>
-            </div>
-        `;
+    // Re-select the matching dropdown button
+    const scenarioId = activeScenarioResult.context.scenarioId;
+    document.querySelectorAll('.dropdown-scenario-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.scenarioId === scenarioId);
     });
 
-    html += '</div>';
-    container.innerHTML = html;
+    renderNodes();
+    renderArrows();
+    renderImpactArrows();
+    renderBanner();
 }
 
 // ===== TIMESTAMP =====
@@ -674,7 +772,8 @@ function init() {
     renderNodes();
     renderArrows();
     initInteractions();
-    buildScenarioPanel();
+    buildScenarioDropdown();
+    renderBanner();
 }
 
 // Re-render on resize
@@ -684,8 +783,12 @@ window.addEventListener('resize', () => {
     resizeTimeout = setTimeout(() => {
         renderNodes();
         renderArrows();
+        if (activeScenarioResult) {
+            renderImpactArrows();
+        }
     }, 200);
 });
 
 // Boot
 document.addEventListener('DOMContentLoaded', init);
+
