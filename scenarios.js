@@ -127,14 +127,15 @@ const SHOCK_TYPE_LABELS = {
     credit: '💳 Credit',
 };
 
-// Direction → accent color mapping for the scenario banner
-// Negative-pressure directions get red, positive/easing get green
+// Direction → accent color + background tint mapping for the scenario banner
+// Negative-pressure directions get red accent + dark red tint
+// Positive/easing directions get green accent + dark green tint
 const DIRECTION_COLORS = {
-    hawkish: { accent: '#f87171', sentiment: 'negative' },
-    inflationary: { accent: '#f87171', sentiment: 'negative' },
-    growth_down: { accent: '#f87171', sentiment: 'negative' },
-    risk_off: { accent: '#f87171', sentiment: 'negative' },
-    dovish: { accent: '#4ade80', sentiment: 'positive' },
-    disinflationary: { accent: '#4ade80', sentiment: 'positive' },
-    growth_up: { accent: '#4ade80', sentiment: 'positive' },
+    hawkish: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
+    inflationary: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
+    growth_down: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
+    risk_off: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
+    dovish: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
+    disinflationary: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
+    growth_up: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
 };

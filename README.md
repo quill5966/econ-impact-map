@@ -55,10 +55,35 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design doc.
 ├── mechanisms.js        # L3: Mechanism registry
 ├── impact-rules.js      # L3: Causal rules
 ├── causal-engine.js     # L4: Deterministic engine
-├── app.js               # Layout, rendering, interactions
+├── relationships.js     # Subitem causal edges
+├── app.js               # Layout, rendering, view switching
+├── view-heatmap.js      # View: Full Picture (heatmap grid)
+├── view-timeline.js     # View: Story (timeline feed)
+├── view-gauges.js       # View: Summary (gauge dials)
+├── view-causal-chain.js # View: Causal Chain (deferred — stub)
 ├── ARCHITECTURE.md      # Full architecture doc
 └── README.md            # This file
 ```
+
+## Legacy Canvas (Hidden Utility)
+
+The original circular ring-of-cards view is preserved behind a feature flag. It is **not** accessible through the UI — it exists for debugging and reference purposes only.
+
+To enable it, open the browser console and run:
+
+```js
+SHOW_LEGACY_CANVAS = true;
+switchView('legacy');
+```
+
+To disable it again:
+
+```js
+SHOW_LEGACY_CANVAS = false;
+switchView('heatmap');
+```
+
+All legacy canvas code is isolated in `app.js` (rendering, arrows, interactions). When ready to permanently remove it, delete the functions and styles gated by `SHOW_LEGACY_CANVAS`.
 
 ## Roadmap
 

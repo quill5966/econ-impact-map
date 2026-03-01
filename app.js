@@ -12,7 +12,129 @@ const EDGES = [];
 let selectedNodeId = null;
 let activeScenarioResult = null;
 
-// ===== LAYOUT =====
+// ── View switcher state ──
+let activeView = 'heatmap';         // 'heatmap' | 'timeline' | 'gauges' | 'causal'
+let scenarioViewHistory = {};       // { scenarioId: lastTabUsed }
+let lastScenarioId = null;
+
+// ── Legacy canvas feature flag ──
+// Set to true via browser console to show the original circular canvas view.
+// See README.md "Legacy Canvas" section for usage.
+let SHOW_LEGACY_CANVAS = false;
+
+// ===== VIEW SWITCHER =====
+
+const VIEW_TABS = [
+    { id: 'heatmap', label: 'Full Picture', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>` },
+    { id: 'timeline', label: 'Story', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="4" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="1.5" cy="3" r="1" fill="currentColor"/><circle cx="1.5" cy="8" r="1" fill="currentColor"/><circle cx="1.5" cy="13" r="1" fill="currentColor"/></svg>` },
+    { id: 'gauges', label: 'Summary', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 12 A5 5 0 0 1 13 12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="8" y1="12" x2="5.5" y2="7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r="1.2" fill="currentColor"/></svg>` },
+    { id: 'causal', label: 'Causal Chain', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="3" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="7.2" x2="11" y2="4.8" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="8.8" x2="11" y2="11.2" stroke="currentColor" stroke-width="1.2"/></svg>`, badge: 'soon' },
+];
+
+/**
+ * Render the view switcher segmented control.
+ */
+function renderViewSwitcher() {
+    const switcher = document.getElementById('viewSwitcher');
+
+    switcher.innerHTML = VIEW_TABS.map(tab => {
+        const isActive = activeView === tab.id;
+        const badgeHtml = tab.badge ? `<span class="vs-badge">${tab.badge}</span>` : '';
+        return `<button class="vs-tab ${isActive ? 'active' : ''}" data-view="${tab.id}" id="vsTab-${tab.id}">
+            <span class="vs-icon">${tab.icon}</span>
+            <span class="vs-label">${tab.label}</span>
+            ${badgeHtml}
+        </button>`;
+    }).join('');
+
+    // Wire tab clicks
+    switcher.querySelectorAll('.vs-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            switchView(tab.dataset.view);
+        });
+    });
+}
+
+/**
+ * Switch to a specific view, hide all others, render the active view.
+ */
+function switchView(viewId) {
+    // Handle legacy canvas view
+    if (viewId === 'legacy' && SHOW_LEGACY_CANVAS) {
+        activeView = 'legacy';
+        document.getElementById('viewContent').style.display = 'none';
+        document.getElementById('canvas').style.display = 'flex';
+        renderNodes();
+        renderArrows();
+        if (activeScenarioResult) renderImpactArrows();
+        updateTabHighlight();
+        return;
+    }
+
+    activeView = viewId;
+
+    // Hide legacy canvas, show view content
+    document.getElementById('canvas').style.display = 'none';
+    const viewContent = document.getElementById('viewContent');
+    viewContent.style.display = 'block';
+
+    // Store tab in scenario view history
+    if (activeScenarioResult) {
+        const scenarioId = activeScenarioResult.context.scenarioId;
+        scenarioViewHistory[scenarioId] = viewId;
+    }
+
+    // Update tab highlight
+    updateTabHighlight();
+
+    // Render the active view
+    switch (viewId) {
+        case 'heatmap':
+            renderHeatmapView(viewContent);
+            break;
+        case 'timeline':
+            renderTimelineView(viewContent);
+            if (activeScenarioResult) {
+                requestAnimationFrame(animateTimelineCascade);
+            }
+            break;
+        case 'gauges':
+            renderGaugesView(viewContent);
+            break;
+        case 'causal':
+            renderCausalChainView(viewContent);
+            break;
+        default:
+            renderHeatmapView(viewContent);
+    }
+}
+
+/**
+ * Update the active tab highlight in the view switcher.
+ */
+function updateTabHighlight() {
+    document.querySelectorAll('.vs-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.view === activeView);
+    });
+}
+
+/**
+ * Determine the default view based on context.
+ * - No scenario → 'heatmap' (Full Picture)
+ * - Scenario just activated → 'gauges' (Summary)
+ * - Switching between scenarios (no reset) → preserve current tab
+ */
+function getDefaultView(isScenarioActivation, isReset, newScenarioId) {
+    if (isReset || !activeScenarioResult) {
+        return 'heatmap';
+    }
+
+    // Always preserve the current tab when activating or switching scenarios
+    return activeView;
+}
+
+
+// ===== LAYOUT (Legacy Canvas) =====
 
 function getCanvasCenter() {
     // Offset for top-bar (56px) + scenario banner (48px)
@@ -46,7 +168,7 @@ function getNodePositions() {
     });
 }
 
-// ===== NODE RENDERING =====
+// ===== NODE RENDERING (Legacy Canvas) =====
 
 function getImpactForIndicator(indicatorId) {
     if (!activeScenarioResult) return null;
@@ -112,7 +234,7 @@ function renderNodes() {
     });
 }
 
-// ===== SVG ARROW RENDERING =====
+// ===== SVG ARROW RENDERING (Legacy Canvas) =====
 
 function getNodeCenter(nodeId) {
     const positions = getNodePositions();
@@ -254,7 +376,7 @@ function renderArrows() {
     });
 }
 
-// ===== IMPACT PROPAGATION ARROWS =====
+// ===== IMPACT PROPAGATION ARROWS (Legacy Canvas) =====
 
 // Dash patterns per lag bucket (visually differentiates timing)
 const LAG_DASH_PATTERNS = {
@@ -265,10 +387,10 @@ const LAG_DASH_PATTERNS = {
 };
 
 const LAG_COLORS = {
-    immediate: '#4ade80',        // green
+    immediate: '#4ADE80',        // green
     short: '#60a5fa',        // blue
-    medium: '#eab308',        // gold
-    long: '#f87171',        // red
+    medium: '#EAB308',        // gold
+    long: '#F87171',        // red
 };
 
 function getCategoryForIndicator(indicatorId) {
@@ -365,7 +487,7 @@ function renderImpactArrows() {
         const labelY = 0.25 * startY + 0.5 * cpY + 0.25 * endY;
 
         const pathD = `M ${startX} ${startY} Q ${cpX} ${cpY} ${endX} ${endY}`;
-        const color = LAG_COLORS[lag] || '#9b5fff';
+        const color = LAG_COLORS[lag] || '#6C63FF';
         const dashPattern = LAG_DASH_PATTERNS[lag] || '';
 
         // Arrowhead marker
@@ -428,7 +550,7 @@ function animateFlow(el, pathLength) {
     requestAnimationFrame(step);
 }
 
-// ===== INTERACTION =====
+// ===== INTERACTION (Legacy Canvas) =====
 
 function selectNode(nodeId) {
     document.querySelectorAll('.node.selected').forEach((el) => el.classList.remove('selected'));
@@ -609,13 +731,14 @@ function renderBanner() {
         // ── State 2: Active scenario ──
         const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
         const ctx = activeScenarioResult.context;
-        const dirColor = DIRECTION_COLORS[preset.defaultShockDirection] || { accent: '#9b5fff', sentiment: 'neutral' };
+        const dirColor = DIRECTION_COLORS[preset.defaultShockDirection] || { accent: '#6C63FF', bgTint: '#111320', sentiment: 'neutral' };
         const sizeLabel = ['S', 'M', 'L'][ctx.surpriseSize - 1] || 'M';
         const regimeLabel = ctx.regime.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
         const summary = preset.plainEnglishSummary || preset.descriptionShort;
 
         banner.className = 'scenario-banner active expandable';
         banner.style.setProperty('--banner-accent', dirColor.accent);
+        banner.style.background = dirColor.bgTint;
 
         banner.innerHTML = `
             <div class="banner-content">
@@ -642,7 +765,7 @@ function renderBanner() {
         // ── State 3: Reset / cleared with undo available ──
         banner.className = 'scenario-banner';
         banner.style.removeProperty('--banner-accent');
-
+        banner.style.background = '';
         banner.innerHTML = `
             <div class="banner-reset">
                 <span class="banner-reset-text">Scenario cleared.</span>
@@ -663,7 +786,7 @@ function renderBanner() {
         // ── State 1: Default / no scenario ──
         banner.className = 'scenario-banner';
         banner.style.removeProperty('--banner-accent');
-
+        banner.style.background = '';
         banner.innerHTML = `
             <div class="banner-default">
                 <span class="banner-default-icon">📊</span>
@@ -698,10 +821,22 @@ function executeScenario(scenarioId) {
 
     const context = getScenarioContext(scenarioId);
     activeScenarioResult = runScenario(context);
-    renderNodes();
-    renderArrows();
-    renderImpactArrows();
+
+    // Determine the right tab to switch to
+    const isNewScenario = lastScenarioId !== scenarioId;
+    const targetView = getDefaultView(true, false, scenarioId);
+    lastScenarioId = scenarioId;
+
     renderBanner();
+
+    // Update legacy canvas if it's active
+    if (activeView === 'legacy' && SHOW_LEGACY_CANVAS) {
+        renderNodes();
+        renderArrows();
+        renderImpactArrows();
+    } else {
+        switchView(targetView);
+    }
 }
 
 function rerunActiveScenario() {
@@ -709,24 +844,36 @@ function rerunActiveScenario() {
     const scenarioId = activeScenarioResult.context.scenarioId;
     const context = getScenarioContext(scenarioId);
     activeScenarioResult = runScenario(context);
-    renderNodes();
-    renderArrows();
-    renderImpactArrows();
+
     renderBanner();
+
+    if (activeView === 'legacy' && SHOW_LEGACY_CANVAS) {
+        renderNodes();
+        renderArrows();
+        renderImpactArrows();
+    } else {
+        switchView(activeView); // re-render current view with new data
+    }
 }
 
 function resetScenario() {
     // Stash full result for undo (preserves future LLM-generated explanations)
     previousScenarioState = activeScenarioResult;
+    const previousView = activeView;
     activeScenarioResult = null;
 
     // Deselect scenario button in dropdown
     document.querySelectorAll('.dropdown-scenario-btn').forEach((b) => b.classList.remove('active'));
 
-    renderNodes();
-    renderArrows();
-    renderImpactArrows();
     renderBanner();
+
+    if (activeView === 'legacy' && SHOW_LEGACY_CANVAS) {
+        renderNodes();
+        renderArrows();
+        renderImpactArrows();
+    } else {
+        switchView('heatmap');
+    }
 }
 
 function undoReset() {
@@ -740,10 +887,16 @@ function undoReset() {
         b.classList.toggle('active', b.dataset.scenarioId === scenarioId);
     });
 
-    renderNodes();
-    renderArrows();
-    renderImpactArrows();
+    // Restore the view the scenario was on, or default to gauges
+    const restoredView = scenarioViewHistory[scenarioId] || 'gauges';
+
     renderBanner();
+
+    if (SHOW_LEGACY_CANVAS && restoredView === 'legacy') {
+        switchView('legacy');
+    } else {
+        switchView(restoredView);
+    }
 }
 
 // ===== TIMESTAMP =====
@@ -769,11 +922,11 @@ function init() {
     NODES = buildNodes();
 
     updateTimestamp();
-    renderNodes();
-    renderArrows();
     initInteractions();
     buildScenarioDropdown();
     renderBanner();
+    renderViewSwitcher();
+    switchView('heatmap');
 }
 
 // Re-render on resize
@@ -781,14 +934,18 @@ let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        renderNodes();
-        renderArrows();
-        if (activeScenarioResult) {
-            renderImpactArrows();
+        if (activeView === 'legacy' && SHOW_LEGACY_CANVAS) {
+            renderNodes();
+            renderArrows();
+            if (activeScenarioResult) {
+                renderImpactArrows();
+            }
+        } else {
+            // Re-render the active view
+            switchView(activeView);
         }
     }, 200);
 });
 
 // Boot
 document.addEventListener('DOMContentLoaded', init);
-

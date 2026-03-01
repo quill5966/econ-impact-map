@@ -19,7 +19,14 @@
   <!-- Scenario banner (replaces the old sidebar) -->
   <div class="scenario-banner" id="scenarioBanner"></div>
 
-  <main class="canvas" id="canvas">
+  <!-- View switcher (tabs between banner and content) -->
+  <nav class="view-switcher" id="viewSwitcher"></nav>
+
+  <!-- View content area (scrollable, one view visible at a time) -->
+  <div class="view-content" id="viewContent"></div>
+
+  <!-- Legacy canvas (hidden by default, behind SHOW_LEGACY_CANVAS flag) -->
+  <main class="canvas" id="canvas" style="display:none;">
     <!-- SVG layer for arrows (rendered by JS) -->
     <svg class="arrows-layer" id="arrowsSvg">
       <defs>
@@ -36,7 +43,16 @@
   <script src="mechanisms.js"></script>
   <script src="scenarios.js"></script>
   <script src="impact-rules.js"></script>
+  <script src="relationships.js"></script>
   <script src="causal-engine.js"></script>
+
+  <!-- View renderers -->
+  <script src="view-heatmap.js"></script>
+  <script src="view-timeline.js"></script>
+  <script src="view-gauges.js"></script>
+  <script src="view-causal-chain.js"></script>
+
+  <!-- Main app (must load last) -->
   <script src="app.js"></script>
 </body>
 
