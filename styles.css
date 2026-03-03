@@ -844,8 +844,9 @@ body {
   color: var(--text-primary);
 }
 
-.dropdown-controls .scenario-select {
-  padding: 6px 10px;
+/* ===== REUSABLE CUSTOM SELECT ===== */
+.custom-select {
+  padding: 6px 28px 6px 10px;
   font-size: 12px;
   font-family: 'Inter', sans-serif;
   color: var(--text-primary);
@@ -854,15 +855,24 @@ body {
   border-radius: 6px;
   cursor: pointer;
   appearance: none;
+  -webkit-appearance: none;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238B8FA3' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 
-.dropdown-controls .scenario-select:focus {
+.custom-select:hover {
+  border-color: #3D4355;
+  background-color: var(--bg-surface3);
+}
+
+.custom-select:focus {
   border-color: var(--accent);
 }
 
-.dropdown-controls .scenario-select option {
+.custom-select option {
   background: var(--bg-surface1);
   color: var(--text-primary);
 }

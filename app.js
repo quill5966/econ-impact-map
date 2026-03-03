@@ -655,27 +655,14 @@ function buildScenarioDropdown() {
             </div>
             <div class="dropdown-controls">
                 <div class="dropdown-control-group">
-                    <label>Surprise Size</label>
-                    <div class="scenario-toggle" id="surpriseSizeToggle">
-                        <button data-value="1" class="toggle-btn">S</button>
-                        <button data-value="2" class="toggle-btn active">M</button>
-                        <button data-value="3" class="toggle-btn">L</button>
-                    </div>
-                </div>
-                <div class="dropdown-control-group">
                     <label>Regime</label>
-                    <select id="regimeSelect" class="scenario-select">
-                        <option value="soft_landing" selected>Soft Landing</option>
+                    <select id="regimeSelect" class="custom-select">
+                        <option value="soft_landing">Soft Landing</option>
                         <option value="late_cycle">Late Cycle</option>
-                        <option value="recession_risk">Recession Risk</option>
+                        <option value="recession_risk" selected>Recession Risk</option>
                         <option value="inflation_scare">Inflation Scare</option>
                         <option value="financial_stress">Financial Stress</option>
                     </select>
-                </div>
-                <div class="dropdown-control-group">
-                    <label class="scenario-checkbox-label">
-                        <input type="checkbox" id="pricedInCheck"> Already priced in
-                    </label>
                 </div>
             </div>
         </div>
@@ -691,20 +678,8 @@ function buildScenarioDropdown() {
         });
     });
 
-    // Surprise size toggle
-    document.getElementById('surpriseSizeToggle').addEventListener('click', (e) => {
-        const btn = e.target.closest('.toggle-btn');
-        if (!btn) return;
-        document.querySelectorAll('#surpriseSizeToggle .toggle-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        rerunActiveScenario();
-    });
-
     // Regime select
     document.getElementById('regimeSelect').addEventListener('change', rerunActiveScenario);
-
-    // Priced-in checkbox
-    document.getElementById('pricedInCheck').addEventListener('change', rerunActiveScenario);
 }
 
 function toggleScenarioDropdown(forceState) {
@@ -732,7 +707,6 @@ function renderBanner() {
         const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
         const ctx = activeScenarioResult.context;
         const dirColor = DIRECTION_COLORS[preset.defaultShockDirection] || { accent: '#6C63FF', bgTint: '#111320', sentiment: 'neutral' };
-        const sizeLabel = ['S', 'M', 'L'][ctx.surpriseSize - 1] || 'M';
         const regimeLabel = ctx.regime.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
         const summary = preset.plainEnglishSummary || preset.descriptionShort;
 
@@ -747,10 +721,7 @@ function renderBanner() {
                         <span class="banner-dot"></span>
                         <span class="banner-title">${preset.title}</span>
                         <span class="banner-meta">
-                            Size: ${sizeLabel}
-                            <span class="banner-meta-sep">·</span>
                             Regime: ${regimeLabel}
-                            ${ctx.marketAlreadyPricedIn ? '<span class="banner-meta-sep">·</span> Already Priced In' : ''}
                         </span>
                     </div>
                     <div class="banner-summary">${summary}</div>
@@ -800,17 +771,12 @@ function renderBanner() {
 }
 
 function getScenarioContext(scenarioId) {
-    const surpriseSize = parseInt(
-        document.querySelector('#surpriseSizeToggle .toggle-btn.active')?.dataset.value || '2'
-    );
-    const regime = document.getElementById('regimeSelect')?.value || 'soft_landing';
-    const marketAlreadyPricedIn = document.getElementById('pricedInCheck')?.checked || false;
+    const regime = document.getElementById('regimeSelect')?.value || 'recession_risk';
 
     return {
         scenarioId,
-        surpriseSize,
+        surpriseSize: 2,
         regime,
-        marketAlreadyPricedIn,
         persistence: 'one_off',
     };
 }

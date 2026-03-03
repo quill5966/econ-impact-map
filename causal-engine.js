@@ -8,7 +8,6 @@
  * @param {string} context.scenarioId - ID of the scenario preset
  * @param {number} context.surpriseSize - 1 (small), 2 (medium), 3 (large)
  * @param {string} context.regime - RegimeId ('soft_landing', 'late_cycle', etc.)
- * @param {boolean} context.marketAlreadyPricedIn - dampens strength if true
  * @param {string} context.persistence - 'one_off' | 'trend_confirming'
  * @returns {Object} { context, impacts: ComputedImpact[] }
  */
@@ -48,13 +47,7 @@ function runScenario(context) {
             reasons.push(`surprise scaling: ${sizeKey} (×${scaling})`);
         }
 
-        // 4. Dampen if already priced in
-        if (context.marketAlreadyPricedIn) {
-            strength = strength * 0.3;
-            reasons.push('dampened: market already priced in (×0.3)');
-        }
-
-        // 5. Persistence boost (trend-confirming gets a small bump)
+        // 4. Persistence boost (trend-confirming gets a small bump)
         if (context.persistence === 'trend_confirming') {
             strength = strength * 1.15;
             reasons.push('persistence boost: trend_confirming (×1.15)');
