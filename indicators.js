@@ -11,7 +11,7 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'percent-range',
         source: 'FOMC decision (federalreserve.gov)',
-        observation: { value: '4.25–4.50%', period: 'Jan 28, 2026', sentiment: 'neutral' },
+        observation: { value: '4.25–4.50%', period: 'Jan 28, 2026' },
     },
     'qe-qt-pace': {
         id: 'qe-qt-pace',
@@ -20,7 +20,7 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'label',
         source: 'Fed balance sheet (federalreserve.gov)',
-        observation: { value: 'QT Ended', period: 'Dec 1, 2025', sentiment: 'neutral' },
+        observation: { value: 'QT Ended', period: 'Dec 1, 2025' },
     },
     'forward-guidance': {
         id: 'forward-guidance',
@@ -29,7 +29,7 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'label',
         source: 'FOMC statement + minutes',
-        observation: { value: 'Hold / Data-dep.', period: 'Jan 28, 2026', sentiment: 'neutral' },
+        observation: { value: 'Hold / Data-dep.', period: 'Jan 28, 2026' },
     },
 
     // ── Financial Conditions ───────────────────────────────────
@@ -40,7 +40,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'U.S. Treasury 2Y yield',
-        observation: { value: '3.48%', period: 'Feb 20, 2026', sentiment: 'neutral' },
+        observation: { value: '3.48%', period: 'Feb 20, 2026' },
     },
     'long-end-yields-10y': {
         id: 'long-end-yields-10y',
@@ -49,7 +49,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'U.S. Treasury 10Y yield',
-        observation: { value: '4.08%', period: 'Feb 20, 2026', sentiment: 'neutral' },
+        observation: { value: '4.08%', period: 'Feb 20, 2026' },
     },
     'mortgage-rates': {
         id: 'mortgage-rates',
@@ -58,7 +58,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'Freddie Mac PMMS 30-yr fixed',
-        observation: { value: '6.01%', period: 'Feb 19, 2026', sentiment: 'neutral' },
+        observation: { value: '6.01%', period: 'Feb 19, 2026' },
     },
 
     // ── Real Economy ───────────────────────────────────────────
@@ -69,7 +69,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'millions-saar',
         source: 'U.S. Census Bureau',
-        observation: { value: '1.48M SAAR', period: 'Jan 2026', sentiment: 'positive' },
+        observation: { value: '1.48M SAAR', period: 'Jan 2026' },
     },
     'consumer-spending': {
         id: 'consumer-spending',
@@ -78,7 +78,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-mom',
         source: 'BEA Personal Income & Outlays',
-        observation: { value: '+0.4% MoM', period: 'Dec 2025', sentiment: 'positive' },
+        observation: { value: '+0.4% MoM', period: 'Dec 2025' },
     },
     'corporate-borrowing': {
         id: 'corporate-borrowing',
@@ -87,7 +87,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'basis-points',
         source: 'ICE BofA IG OAS',
-        observation: { value: 'IG Spread 79bp', period: 'Feb 19, 2026', sentiment: 'neutral' },
+        observation: { value: 'IG Spread 79bp', period: 'Feb 19, 2026' },
     },
     'gdp-growth': {
         id: 'gdp-growth',
@@ -96,7 +96,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-qoq',
         source: 'BEA advance estimate',
-        observation: { value: '+1.4% (Q4)', period: 'Q4 2025', sentiment: 'positive' },
+        observation: { value: '+1.4% (Q4)', period: 'Q4 2025' },
     },
     'unemployment': {
         id: 'unemployment',
@@ -105,7 +105,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'BLS Employment Situation',
-        observation: { value: '4.3%', period: 'Jan 2026', sentiment: 'negative' },
+        observation: { value: '4.3%', period: 'Jan 2026' },
     },
     'job-openings': {
         id: 'job-openings',
@@ -114,7 +114,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'millions',
         source: 'BLS JOLTS',
-        observation: { value: '6.5M', period: 'Dec 2025', sentiment: 'negative' },
+        observation: { value: '6.5M', period: 'Dec 2025' },
     },
     'wage-growth': {
         id: 'wage-growth',
@@ -123,7 +123,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS Avg Hourly Earnings',
-        observation: { value: '+3.7% YoY', period: 'Jan 2026', sentiment: 'positive' },
+        observation: { value: '+3.7% YoY', period: 'Jan 2026' },
     },
 
     // ── Inflation ──────────────────────────────────────────────
@@ -134,7 +134,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS CPI less food & energy',
-        observation: { value: '+2.5% YoY', period: 'Jan 2026', sentiment: 'negative' },
+        observation: { value: '+2.5% YoY', period: 'Jan 2026' },
     },
     'core-ppi': {
         id: 'core-ppi',
@@ -143,7 +143,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS PPI less food & energy',
-        observation: { value: '+3.3% YoY', period: 'Dec 2025', sentiment: 'negative' },
+        observation: { value: '+3.3% YoY', period: 'Dec 2025' },
     },
     'headline-cpi': {
         id: 'headline-cpi',
@@ -152,7 +152,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS CPI (bls.gov)',
-        observation: { value: '+2.4% YoY', period: 'Jan 2026', sentiment: 'negative' },
+        observation: { value: '+2.4% YoY', period: 'Jan 2026' },
     },
     'headline-ppi': {
         id: 'headline-ppi',
@@ -161,7 +161,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS PPI Final Demand',
-        observation: { value: '+3.0% YoY', period: 'Dec 2025', sentiment: 'negative' },
+        observation: { value: '+3.0% YoY', period: 'Dec 2025' },
     },
     'pce': {
         id: 'pce',
@@ -170,7 +170,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BEA PCE Price Index',
-        observation: { value: '+2.9% YoY', period: 'Dec 2025', sentiment: 'negative' },
+        observation: { value: '+2.9% YoY', period: 'Dec 2025' },
     },
     'core-pce': {
         id: 'core-pce',
@@ -179,7 +179,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BEA Core PCE Price Index',
-        observation: { value: '+3.0% YoY', period: 'Dec 2025', sentiment: 'negative' },
+        observation: { value: '+3.0% YoY', period: 'Dec 2025' },
     },
 
     // ── Market Pricing & Risk Sentiment ────────────────────────
@@ -190,7 +190,7 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'usd',
         source: 'WTI crude spot (tradingeconomics.com)',
-        observation: { value: '$66.35', period: 'Feb 20, 2026', sentiment: 'neutral' },
+        observation: { value: '$66.35', period: 'Feb 20, 2026' },
     },
     'dow': {
         id: 'dow',
@@ -199,7 +199,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'DJIA closing price',
-        observation: { value: '48,804', period: 'Feb 21, 2026', sentiment: 'positive' },
+        observation: { value: '48,804', period: 'Feb 21, 2026' },
     },
     'nasdaq': {
         id: 'nasdaq',
@@ -208,7 +208,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'Nasdaq Composite close',
-        observation: { value: '22,627', period: 'Feb 21, 2026', sentiment: 'positive' },
+        observation: { value: '22,627', period: 'Feb 21, 2026' },
     },
     'sp-500': {
         id: 'sp-500',
@@ -217,7 +217,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'S&P 500 closing price',
-        observation: { value: '6,838', period: 'Feb 21, 2026', sentiment: 'positive' },
+        observation: { value: '6,838', period: 'Feb 21, 2026' },
     },
     'vix': {
         id: 'vix',
@@ -226,7 +226,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'CBOE VIX close',
-        observation: { value: '19.09', period: 'Feb 20, 2026', sentiment: 'neutral' },
+        observation: { value: '19.09', period: 'Feb 20, 2026' },
     },
 };
 
@@ -251,7 +251,6 @@ function buildNodes() {
                 period: ind.observation.period,
                 source: ind.source,
                 updateMode: ind.updateMode,
-                sentiment: ind.observation.sentiment,
             }));
         return { ...theme, theme: theme.id, subItems };
     });

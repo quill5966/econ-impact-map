@@ -131,11 +131,11 @@ const SHOCK_TYPE_LABELS = {
 // Negative-pressure directions get red accent + dark red tint
 // Positive/easing directions get green accent + dark green tint
 const DIRECTION_COLORS = {
-    hawkish: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
-    inflationary: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
-    growth_down: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
-    risk_off: { accent: '#E5383B', bgTint: '#1A0F0F', sentiment: 'negative' },
-    dovish: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
-    disinflationary: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
-    growth_up: { accent: '#1DB954', bgTint: '#0A150F', sentiment: 'positive' },
+    hawkish: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    inflationary: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    growth_down: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    risk_off: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    dovish: { accent: '#1DB954', bgTint: '#0A150F' },
+    disinflationary: { accent: '#1DB954', bgTint: '#0A150F' },
+    growth_up: { accent: '#1DB954', bgTint: '#0A150F' },
 };

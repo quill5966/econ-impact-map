@@ -25,19 +25,6 @@
   <!-- View content area (scrollable, one view visible at a time) -->
   <div class="view-content" id="viewContent"></div>
 
-  <!-- Legacy canvas (hidden by default, behind SHOW_LEGACY_CANVAS flag) -->
-  <main class="canvas" id="canvas" style="display:none;">
-    <!-- SVG layer for arrows (rendered by JS) -->
-    <svg class="arrows-layer" id="arrowsSvg">
-      <defs>
-        <!-- Gradients and markers will be injected by JS -->
-      </defs>
-    </svg>
-
-    <!-- Nodes are injected by JS into this container -->
-    <div class="nodes-layer" id="nodesLayer"></div>
-  </main>
-
   <!-- Data layer scripts (order matters — dependencies first) -->
   <script src="indicators.js"></script>
   <script src="mechanisms.js"></script>

@@ -70,7 +70,6 @@ flowchart TD
 |-------|---------------|
 | `id`, `name`, `category`, `unit`, `source` | Static — versioned with app |
 | `observation.value`, `.period` | Semi-static — updated with data refreshes |
-| `observation.sentiment` | Static — derived from rules |
 
 Each indicator belongs to a category that maps to a visual theme node:
 

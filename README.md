@@ -65,26 +65,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design doc.
 └── README.md            # This file
 ```
 
-## Legacy Canvas (Hidden Utility)
-
-The original circular ring-of-cards view is preserved behind a feature flag. It is **not** accessible through the UI — it exists for debugging and reference purposes only.
-
-To enable it, open the browser console and run:
-
-```js
-SHOW_LEGACY_CANVAS = true;
-switchView('legacy');
-```
-
-To disable it again:
-
-```js
-SHOW_LEGACY_CANVAS = false;
-switchView('heatmap');
-```
-
-All legacy canvas code is isolated in `app.js` (rendering, arrows, interactions). When ready to permanently remove it, delete the functions and styles gated by `SHOW_LEGACY_CANVAS`.
-
 ## Roadmap
 
 - **Phase 1** ✅ — 4-layer architecture, 9 scenarios, causal engine, scenario picker UI
