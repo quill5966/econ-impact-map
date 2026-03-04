@@ -1281,6 +1281,7 @@ body {
   color: var(--text-tertiary);
   background: rgba(15, 17, 23, 0.95);
   border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
   width: 190px;
 }
 
@@ -1289,8 +1290,8 @@ body {
   padding: 10px 6px;
   background: rgba(15, 17, 23, 0.95);
   border-bottom: 1px solid var(--border-subtle);
-  border-right: 1px solid var(--border-subtle);
-  width: 100px;
+  border-right: 3px solid var(--border-subtle);
+  width: 130px;
 }
 
 .heatmap-time-header {
@@ -1298,6 +1299,7 @@ body {
   padding: 10px 8px;
   background: rgba(15, 17, 23, 0.95);
   border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
 }
 
 .hth-label {
@@ -1349,6 +1351,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   border-bottom: 1px solid rgba(31, 35, 48, 0.8);
+  border-right: 1px solid var(--border-subtle);
 }
 
 .heatmap-baseline-cell {
@@ -1359,14 +1362,15 @@ body {
   color: var(--text-secondary);
   white-space: nowrap;
   border-bottom: 1px solid rgba(31, 35, 48, 0.8);
-  border-right: 1px solid var(--border-subtle);
+  border-right: 3px solid var(--border-subtle);
 }
 
 .heatmap-cell {
   padding: 6px 8px;
   text-align: center;
   border-bottom: 1px solid rgba(31, 35, 48, 0.8);
-  min-width: 80px;
+  border-right: 1px solid var(--border-subtle);
+  min-width: 60px;
   transition: background 0.3s ease;
 }
 
