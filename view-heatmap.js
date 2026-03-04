@@ -85,6 +85,7 @@ function renderHeatmapView(container) {
         <thead>
             <tr>
                 <th class="heatmap-indicator-header">Indicator</th>
+                <th class="heatmap-baseline-header"><span class="hth-label">Baseline</span><span class="hth-sublabel">Current</span></th>
                 ${HEATMAP_TIME_HORIZONS.filter(h => !heatmapHiddenColumns.has(h.id)).map(h =>
         `<th class="heatmap-time-header"><span class="hth-label">${h.label}</span><span class="hth-sublabel">${h.sublabel}</span></th>`
     ).join('')}
@@ -101,7 +102,7 @@ function renderHeatmapView(container) {
 
         // Theme group header row
         tableHtml += `<tr class="heatmap-theme-row">
-            <td class="heatmap-theme-cell" colspan="${1 + HEATMAP_TIME_HORIZONS.filter(h => !heatmapHiddenColumns.has(h.id)).length}">
+            <td class="heatmap-theme-cell" colspan="${2 + HEATMAP_TIME_HORIZONS.filter(h => !heatmapHiddenColumns.has(h.id)).length}">
                 <span class="heatmap-theme-icon">${theme.icon}</span> ${theme.label}
             </td>
         </tr>`;
@@ -109,7 +110,8 @@ function renderHeatmapView(container) {
         // Indicator rows
         indicators.forEach(ind => {
             tableHtml += `<tr class="heatmap-indicator-row" data-indicator="${ind.id}">
-                <td class="heatmap-indicator-name" title="Source: ${ind.source}">${ind.name}</td>`;
+                <td class="heatmap-indicator-name">${ind.name}</td>
+                <td class="heatmap-baseline-cell" title="Source: ${ind.source}&#10;Effective date: ${ind.observation.period}">${ind.observation.value}</td>`;
 
             HEATMAP_TIME_HORIZONS.forEach(horizon => {
                 if (heatmapHiddenColumns.has(horizon.id)) return;
