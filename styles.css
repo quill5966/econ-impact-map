@@ -105,8 +105,25 @@ body {
 }
 
 
+/* ===== API FOOTER ===== */
+.api-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.5;
+}
 
+.api-footer a {
+  color: var(--accent);
+  text-decoration: none;
+  margin-left: 8px;
+}
 
+.api-footer a:hover {
+  text-decoration: underline;
+}
 
 /* ===== SCENARIO BANNER ===== */
 .scenario-banner {

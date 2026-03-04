@@ -12,6 +12,13 @@ npx -y serve .
 
 Then visit the URL shown (typically `http://localhost:3000`).
 
+Update indicator data (requires a [FRED® API key](https://fred.stlouisfed.org/docs/api/api_key.html) in `.env`):
+
+```bash
+node update-indicators.js --dry-run   # preview changes
+node update-indicators.js             # update indicators.js
+```
+
 ## Hybrid Architecture
 
 MacroCausal uses a **4-layer hybrid model** where static, curated causal logic is the source of truth. An LLM (Phase 2+) will sit on top as a narrative layer — it will never decide *what* happens, only *how to explain* what happened.

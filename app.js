@@ -88,6 +88,10 @@ function switchView(viewId) {
         default:
             renderHeatmapView(viewContent);
     }
+
+    // Append FRED® API footer inside the scrollable area
+    const footer = document.querySelector('.api-footer');
+    if (footer) viewContent.appendChild(footer);
 }
 
 /**
