@@ -65,9 +65,9 @@ function renderHeatmapView(container) {
     // Build the filter bar
     let filterHtml = `<div class="heatmap-filters">
         <div class="heatmap-theme-filters">
-            <button class="heatmap-filter-chip ${!heatmapActiveThemeFilter ? 'active' : ''}" data-theme="all">All</button>
+            <button class="filter-chip ${!heatmapActiveThemeFilter ? 'active' : ''}" data-theme="all">All</button>
             ${HEATMAP_THEMES.map(t =>
-        `<button class="heatmap-filter-chip ${heatmapActiveThemeFilter === t.id ? 'active' : ''}" data-theme="${t.id}">${t.icon} ${t.label}</button>`
+        `<button class="filter-chip ${heatmapActiveThemeFilter === t.id ? 'active' : ''}" data-theme="${t.id}">${t.icon} ${t.label}</button>`
     ).join('')}
         </div>
         <div class="heatmap-col-toggles">
@@ -145,17 +145,17 @@ function renderHeatmapView(container) {
     // Empty state overlay
     let emptyOverlay = '';
     if (!hasScenario) {
-        emptyOverlay = `<div class="heatmap-empty-overlay">
-            <div class="heatmap-empty-icon">📊</div>
-            <div class="heatmap-empty-text">Select a scenario to see impacts</div>
-            <div class="heatmap-empty-subtext">The grid shows how each indicator is affected across time horizons</div>
+        emptyOverlay = `<div class="empty-state empty-state--overlay">
+            <div class="empty-state-icon">📊</div>
+            <div class="empty-state-title">Select a scenario to see impacts</div>
+            <div class="empty-state-text">The grid shows how each indicator is affected across time horizons</div>
         </div>`;
     }
 
     container.innerHTML = `<div class="heatmap-view">${filterHtml}${tableHtml}${emptyOverlay}</div>`;
 
     // Wire filter chips
-    container.querySelectorAll('.heatmap-filter-chip').forEach(chip => {
+    container.querySelectorAll('.filter-chip').forEach(chip => {
         chip.addEventListener('click', () => {
             const theme = chip.dataset.theme;
             heatmapActiveThemeFilter = theme === 'all' ? null : theme;
@@ -202,7 +202,7 @@ function showHeatmapTooltip(event, indicatorId, lag) {
     const lagLabel = getLagLabel(impact.lag);
 
     const tooltip = document.createElement('div');
-    tooltip.className = 'heatmap-tooltip';
+    tooltip.className = 'tooltip';
     tooltip.id = 'heatmapTooltip';
     tooltip.innerHTML = `
         <div class="htt-header">

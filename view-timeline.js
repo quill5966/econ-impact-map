@@ -3,11 +3,11 @@
 // Cards cascade in with a stagger animation on scenario activation.
 
 const TIMELINE_THEME_LABELS = {
-    'policy-instruments': '🏛️ Policy',
-    'financial': '📊 Financial',
+    'policy-instruments': '🏛️ Policy Instruments',
+    'financial': '📊 Financial Conditions',
     'real-economy': '📈 Real Economy',
     'inflation': '💲 Inflation',
-    'exogenous': '⚡ Markets',
+    'exogenous': '⚡ Market Pricing & Risk',
 };
 
 const TIMELINE_SECTION_LABELS = {
@@ -27,10 +27,10 @@ function renderTimelineView(container) {
 
     if (!hasScenario) {
         container.innerHTML = `<div class="timeline-view">
-            <div class="timeline-empty">
-                <div class="timeline-empty-icon">📋</div>
-                <div class="timeline-empty-text">No scenario selected</div>
-                <div class="timeline-empty-subtext">The feed will populate once you run a scenario, showing impacts in chronological order</div>
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-title">No scenario selected</div>
+                <div class="empty-state-text">The feed will populate once you run a scenario, showing impacts in chronological order</div>
             </div>
         </div>`;
         return;
@@ -62,9 +62,9 @@ function renderTimelineView(container) {
 
     // Build filter bar
     const filterHtml = `<div class="timeline-filters">
-        <button class="timeline-filter-btn ${!timelineActiveThemeFilter ? 'active' : ''}" data-theme="all">Show All</button>
+        <button class="filter-chip ${!timelineActiveThemeFilter ? 'active' : ''}" data-theme="all">Show All</button>
         ${Object.entries(TIMELINE_THEME_LABELS).map(([id, label]) =>
-        `<button class="timeline-filter-btn ${timelineActiveThemeFilter === id ? 'active' : ''}" data-theme="${id}">${label}</button>`
+        `<button class="filter-chip ${timelineActiveThemeFilter === id ? 'active' : ''}" data-theme="${id}">${label}</button>`
     ).join('')}
     </div>`;
 
@@ -89,15 +89,15 @@ function renderTimelineView(container) {
             if (!ind) return;
 
             const arrow = imp.sign === 'up' ? '↑' : imp.sign === 'down' ? '↓' : '↕';
-            const dirClass = `timeline-dir-${imp.sign}`;
+            const dirClass = `dir-${imp.sign}`;
             const themeLabel = TIMELINE_THEME_LABELS[ind.category] || ind.category;
-            const bgTint = imp.sign === 'up'
-                ? 'rgba(10, 82, 38, 0.15)'
+            const bgClass = imp.sign === 'up'
+                ? 'dir-bg-up'
                 : imp.sign === 'down'
-                    ? 'rgba(92, 10, 10, 0.15)'
-                    : 'rgba(107, 114, 128, 0.10)';
+                    ? 'dir-bg-down'
+                    : 'dir-bg-mixed';
 
-            sectionsHtml += `<div class="timeline-card" data-index="${cardIndex}" data-indicator="${ind.id}" style="background:${bgTint}; animation-delay: ${Math.min(cardIndex * 150, 800)}ms">
+            sectionsHtml += `<div class="timeline-card ${bgClass}" data-index="${cardIndex}" data-indicator="${ind.id}" style="animation-delay: ${Math.min(cardIndex * 150, 800)}ms">
                 <div class="tc-main">
                     <span class="tc-arrow ${dirClass}">${arrow}</span>
                     <span class="tc-name">${ind.name}</span>
@@ -127,7 +127,7 @@ function renderTimelineView(container) {
     container.innerHTML = `<div class="timeline-view">${filterHtml}<div class="timeline-feed">${sectionsHtml}</div></div>`;
 
     // Wire filter buttons
-    container.querySelectorAll('.timeline-filter-btn').forEach(btn => {
+    container.querySelectorAll('.filter-chip').forEach(btn => {
         btn.addEventListener('click', () => {
             const theme = btn.dataset.theme;
             timelineActiveThemeFilter = theme === 'all' ? null : theme;

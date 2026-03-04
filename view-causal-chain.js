@@ -7,11 +7,11 @@
  */
 function renderCausalChainView(container) {
     container.innerHTML = `<div class="causal-chain-view">
-        <div class="causal-chain-placeholder">
-            <div class="ccp-icon">🔗</div>
-            <div class="ccp-title">Causal Chain</div>
-            <div class="ccp-text">This view will show the causal pathway from the triggering event through financial mechanisms to real economy outcomes.</div>
-            <div class="ccp-badge">Coming soon</div>
+        <div class="empty-state">
+            <div class="empty-state-icon">🔗</div>
+            <div class="empty-state-title">Causal Chain</div>
+            <div class="empty-state-text">This view will show the causal pathway from the triggering event through financial mechanisms to real economy outcomes.</div>
+            <div class="empty-state-badge">Coming soon</div>
         </div>
     </div>`;
 }

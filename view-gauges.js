@@ -181,7 +181,7 @@ function renderGaugesView(container) {
             const ind = INDICATORS[imp.targetIndicatorId];
             if (!ind) return '';
             const arrow = imp.sign === 'up' ? '↑' : imp.sign === 'down' ? '↓' : '↕';
-            const dirClass = imp.sign === 'up' ? 'positive' : imp.sign === 'down' ? 'negative' : 'mixed';
+            const dirClass = imp.sign === 'up' ? 'dir-up' : imp.sign === 'down' ? 'dir-down' : 'dir-mixed';
             return `<div class="gauge-detail-card">
                 <span class="gdc-arrow ${dirClass}">${arrow}</span>
                 <span class="gdc-name">${ind.name}</span>
