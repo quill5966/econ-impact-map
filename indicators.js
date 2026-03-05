@@ -199,7 +199,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'DJIA closing price',
-        schedule: { frequency: 'daily', fredSeriesId: null, fredUnits: null },
+        schedule: { frequency: 'daily', fredSeriesId: 'DJIA', fredUnits: 'lin' },
     },
     'nasdaq': {
         id: 'nasdaq',
@@ -208,7 +208,7 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'Nasdaq Composite close',
-        schedule: { frequency: 'daily', fredSeriesId: null, fredUnits: null },
+        schedule: { frequency: 'daily', fredSeriesId: 'NASDAQCOM', fredUnits: 'lin' },
     },
     'sp-500': {
         id: 'sp-500',
