@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-05T20:00:10.450Z",
+  "lastUpdated": "2026-03-05T20:54:13.589Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
@@ -7,7 +7,7 @@
     },
     "qe-qt-pace": {
       "value": "QT Ended",
-      "period": "Dec 1, 2025"
+      "period": "Jan 28, 2026"
     },
     "forward-guidance": {
       "value": "Hold / Data-dep.",

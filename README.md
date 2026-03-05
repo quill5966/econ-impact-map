@@ -14,8 +14,9 @@ npx -y serve .
 2. Update current indicator data from government sources (requires a [FRED® API key](https://fred.stlouisfed.org/docs/api/api_key.html) in `.env`):
 
 ```bash
-node update-indicators.js --dry-run   # preview changes
-node update-indicators.js             # update indicators.js
+node update-indicators.js             # update all observations
+node update-indicators.js --dry-run   # preview changes without writing
+node update-indicators.js --fomc-only # only run FOMC classification
 ```
 
 ## Hybrid Architecture
