@@ -108,11 +108,11 @@ function renderTimelineView(container) {
                 <div class="tc-detail" id="tcDetail-${ind.id}-${lag}" style="display:none;">
                     <div class="tc-detail-row">
                         <span class="tc-detail-label">Current value</span>
-                        <span class="tc-detail-value">${ind.observation.value}</span>
+                        <span class="tc-detail-value">${ind.observation ? ind.observation.value : '—'}</span>
                     </div>
                     <div class="tc-detail-row">
                         <span class="tc-detail-label">Period</span>
-                        <span class="tc-detail-value">${ind.observation.period}</span>
+                        <span class="tc-detail-value">${ind.observation ? ind.observation.period : '—'}</span>
                     </div>
                     <button class="tc-crosslink" data-target-view="heatmap" data-indicator="${ind.id}">See in Full Picture →</button>
                 </div>

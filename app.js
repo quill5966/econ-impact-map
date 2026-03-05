@@ -1,6 +1,6 @@
 // ===== MACROCAUSAL APP =====
 // Uses the 4-layer hybrid architecture:
-//   L1: indicators.js  — indicator definitions + observations
+//   L1: indicators.js  — indicator definitions (observations loaded from data/observations.json)
 //   L2: scenarios.js   — scenario presets
 //   L3: impact-rules.js + mechanisms.js — causal graph
 //   L4: causal-engine.js — deterministic engine
@@ -381,8 +381,9 @@ function updateTimestamp() {
 
 // ===== INIT =====
 
-function init() {
-    // Build NODES from indicators.js data
+async function init() {
+    // Load observation data from JSON, then build NODES
+    await loadObservations();
     NODES = buildNodes();
 
     updateTimestamp();

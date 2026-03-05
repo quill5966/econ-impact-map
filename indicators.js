@@ -1,6 +1,6 @@
 // ===== LAYER 1: INDICATORS =====
-// Static definitions + semi-static observations for each economic variable.
-// Extracted from app.js NODES — this is the single source of truth for indicator metadata.
+// Static definitions for each economic variable.
+// Observation data (value + period) is loaded from data/observations.json at runtime.
 
 const INDICATORS = {
     // ── Policy Instruments ─────────────────────────────────────
@@ -11,7 +11,6 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'percent-range',
         source: 'FOMC decision (federalreserve.gov)',
-        observation: { value: '3.50–3.75%', period: 'Mar 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: ['DFEDTARU', 'DFEDTARL'], fredUnits: 'lin' },
     },
     'qe-qt-pace': {
@@ -21,7 +20,6 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'label',
         source: 'Fed balance sheet (federalreserve.gov)',
-        observation: { value: 'QT Ended', period: 'Dec 1, 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: null, fredUnits: null },
     },
     'forward-guidance': {
@@ -31,7 +29,6 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'label',
         source: 'FOMC statement + minutes',
-        observation: { value: 'Hold / Data-dep.', period: 'Jan 28, 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: null, fredUnits: null },
     },
 
@@ -43,7 +40,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'U.S. Treasury 2Y yield',
-        observation: { value: '3.47%', period: 'Mar 2, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'DGS2', fredUnits: 'lin' },
     },
     'long-end-yields-10y': {
@@ -53,7 +49,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'U.S. Treasury 10Y yield',
-        observation: { value: '4.05%', period: 'Mar 2, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'DGS10', fredUnits: 'lin' },
     },
     'mortgage-rates': {
@@ -63,7 +58,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'Freddie Mac PMMS 30-yr fixed',
-        observation: { value: '5.98%', period: 'Feb 26, 2026' },
         schedule: { frequency: 'weekly', fredSeriesId: 'MORTGAGE30US', fredUnits: 'lin' },
     },
 
@@ -75,7 +69,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'millions-saar',
         source: 'U.S. Census Bureau',
-        observation: { value: '1.40M SAAR', period: 'Dec 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: 'HOUST', fredUnits: 'lin' },
     },
     'consumer-spending': {
@@ -85,7 +78,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-mom',
         source: 'BEA Personal Income & Outlays',
-        observation: { value: '+0.4% MoM', period: 'Dec 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: 'PCE', fredUnits: 'pch' },
     },
     'corporate-borrowing': {
@@ -95,7 +87,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'basis-points',
         source: 'ICE BofA IG OAS',
-        observation: { value: 'IG Spread 85bp', period: 'Mar 2, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'BAMLC0A0CM', fredUnits: 'lin' },
     },
     'gdp-growth': {
@@ -105,7 +96,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-qoq',
         source: 'BEA advance estimate',
-        observation: { value: '+1.4%', period: 'Q4 2025' },
         schedule: { frequency: 'quarterly', fredSeriesId: 'A191RL1Q225SBEA', fredUnits: 'lin' },
     },
     'unemployment': {
@@ -115,7 +105,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent',
         source: 'BLS Employment Situation',
-        observation: { value: '4.30%', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'UNRATE', fredUnits: 'lin' },
     },
     'job-openings': {
@@ -125,7 +114,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'millions',
         source: 'BLS JOLTS',
-        observation: { value: '6.5M', period: 'Dec 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: 'JTSJOL', fredUnits: 'lin' },
     },
     'wage-growth': {
@@ -135,7 +123,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS Avg Hourly Earnings',
-        observation: { value: '+0.4% YoY', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'CES0500000003', fredUnits: 'pch' },
     },
 
@@ -147,7 +134,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS CPI less food & energy',
-        observation: { value: '+2.5% YoY', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'CPILFESL', fredUnits: 'pc1' },
     },
     'core-ppi': {
@@ -157,7 +143,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS PPI less food & energy',
-        observation: { value: '+3.6% YoY', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'PPIFES', fredUnits: 'pc1' },
     },
     'headline-cpi': {
@@ -167,7 +152,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS CPI (bls.gov)',
-        observation: { value: '+2.4% YoY', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'CPIAUCSL', fredUnits: 'pc1' },
     },
     'headline-ppi': {
@@ -177,7 +161,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BLS PPI Final Demand',
-        observation: { value: '+2.8% YoY', period: 'Jan 2026' },
         schedule: { frequency: 'monthly', fredSeriesId: 'PPIFIS', fredUnits: 'pc1' },
     },
     'pce': {
@@ -187,7 +170,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BEA PCE Price Index',
-        observation: { value: '+2.9% YoY', period: 'Dec 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: 'PCEPI', fredUnits: 'pc1' },
     },
     'core-pce': {
@@ -197,7 +179,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'percent-yoy',
         source: 'BEA Core PCE Price Index',
-        observation: { value: '+3.0% YoY', period: 'Dec 2025' },
         schedule: { frequency: 'monthly', fredSeriesId: 'PCEPILFE', fredUnits: 'pc1' },
     },
 
@@ -209,7 +190,6 @@ const INDICATORS = {
         updateMode: 'manual',
         unit: 'usd',
         source: 'WTI crude spot (tradingeconomics.com)',
-        observation: { value: '$66.36', period: 'Feb 23, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'DCOILWTICO', fredUnits: 'lin' },
     },
     'dow': {
@@ -219,7 +199,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'DJIA closing price',
-        observation: { value: '48,804', period: 'Feb 21, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: null, fredUnits: null },
     },
     'nasdaq': {
@@ -229,7 +208,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'Nasdaq Composite close',
-        observation: { value: '22,627', period: 'Feb 21, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: null, fredUnits: null },
     },
     'sp-500': {
@@ -239,7 +217,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'S&P 500 closing price',
-        observation: { value: '6,817', period: 'Mar 3, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'SP500', fredUnits: 'lin' },
     },
     'vix': {
@@ -249,7 +226,6 @@ const INDICATORS = {
         updateMode: 'derived',
         unit: 'index',
         source: 'CBOE VIX close',
-        observation: { value: '21.44', period: 'Mar 2, 2026' },
         schedule: { frequency: 'daily', fredSeriesId: 'VIXCLS', fredUnits: 'lin' },
     },
 };
@@ -263,6 +239,23 @@ const NODE_THEMES = [
     { id: 'exogenous', title: 'Market Pricing & Risk Sentiment', icon: '⚡', color: [234, 179, 8] },
 ];
 
+// ── Load observation data from JSON ─────────────────────────────
+async function loadObservations() {
+    try {
+        const resp = await fetch('data/observations.json');
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        for (const [id, obs] of Object.entries(data.observations)) {
+            if (INDICATORS[id]) {
+                INDICATORS[id].observation = obs;
+            }
+        }
+        console.log(`📊 Loaded observations (last updated: ${data.lastUpdated})`);
+    } catch (e) {
+        console.warn('⚠️ Could not load observations:', e.message);
+    }
+}
+
 // Helper: build NODES array from INDICATORS + NODE_THEMES (backwards compat with app.js rendering)
 function buildNodes() {
     return NODE_THEMES.map((theme) => {
@@ -271,11 +264,14 @@ function buildNodes() {
             .map((ind) => ({
                 id: ind.id,
                 name: ind.name,
-                value: ind.observation.value,
-                period: ind.observation.period,
+                value: ind.observation ? ind.observation.value : '—',
+                period: ind.observation ? ind.observation.period : '',
                 source: ind.source,
                 updateMode: ind.updateMode,
             }));
         return { ...theme, theme: theme.id, subItems };
     });
 }
+
+// Node.js module export (ignored in browser, used by update-indicators.js)
+if (typeof module !== 'undefined') module.exports = { INDICATORS, NODE_THEMES };

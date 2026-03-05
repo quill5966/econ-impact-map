@@ -1,0 +1,29 @@
+{
+  "lastUpdated": "2026-03-05T10:30:00Z",
+  "observations": {
+    "fed-funds-target": { "value": "3.50–3.75%", "period": "Mar 2026" },
+    "qe-qt-pace": { "value": "QT Ended", "period": "Dec 1, 2025" },
+    "forward-guidance": { "value": "Hold / Data-dep.", "period": "Jan 28, 2026" },
+    "front-end-yields-2y": { "value": "3.51%", "period": "Mar 3, 2026" },
+    "long-end-yields-10y": { "value": "4.06%", "period": "Mar 3, 2026" },
+    "mortgage-rates": { "value": "6.00%", "period": "Mar 5, 2026" },
+    "housing-starts": { "value": "1.40M SAAR", "period": "Dec 2025" },
+    "consumer-spending": { "value": "+0.4% MoM", "period": "Dec 2025" },
+    "corporate-borrowing": { "value": "IG Spread 82bp", "period": "Mar 4, 2026" },
+    "gdp-growth": { "value": "+1.4%", "period": "Q4 2025" },
+    "unemployment": { "value": "4.30%", "period": "Jan 2026" },
+    "job-openings": { "value": "6.5M", "period": "Dec 2025" },
+    "wage-growth": { "value": "+0.4% YoY", "period": "Jan 2026" },
+    "core-cpi": { "value": "+2.5% YoY", "period": "Jan 2026" },
+    "core-ppi": { "value": "+3.6% YoY", "period": "Jan 2026" },
+    "headline-cpi": { "value": "+2.4% YoY", "period": "Jan 2026" },
+    "headline-ppi": { "value": "+2.8% YoY", "period": "Jan 2026" },
+    "pce": { "value": "+2.9% YoY", "period": "Dec 2025" },
+    "core-pce": { "value": "+3.0% YoY", "period": "Dec 2025" },
+    "oil-barrel-price": { "value": "$71.13", "period": "Mar 2, 2026" },
+    "dow": { "value": "48,804", "period": "Feb 21, 2026" },
+    "nasdaq": { "value": "22,627", "period": "Feb 21, 2026" },
+    "sp-500": { "value": "6,870", "period": "Mar 4, 2026" },
+    "vix": { "value": "21.15", "period": "Mar 4, 2026" }
+  }
+}

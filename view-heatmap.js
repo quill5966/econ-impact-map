@@ -111,7 +111,7 @@ function renderHeatmapView(container) {
         indicators.forEach(ind => {
             tableHtml += `<tr class="heatmap-indicator-row" data-indicator="${ind.id}">
                 <td class="heatmap-indicator-name">${ind.name}</td>
-                <td class="heatmap-baseline-cell" title="Source: ${ind.source}&#10;Effective date: ${ind.observation.period}">${ind.observation.value}</td>`;
+                <td class="heatmap-baseline-cell" title="Source: ${ind.source}&#10;Effective date: ${ind.observation ? ind.observation.period : ''}">${ind.observation ? ind.observation.value : '—'}</td>`;
 
             HEATMAP_TIME_HORIZONS.forEach(horizon => {
                 if (heatmapHiddenColumns.has(horizon.id)) return;
@@ -216,7 +216,7 @@ function showHeatmapTooltip(event, indicatorId, lag) {
         <div class="htt-meta">
             <span>${lagLabel}</span>
             <span class="htt-sep">·</span>
-            <span>Current: ${ind.observation.value}</span>
+            <span>Current: ${ind.observation ? ind.observation.value : '—'}</span>
         </div>
     `;
 

@@ -3,11 +3,11 @@
 /**
  * update-indicators.js
  *
- * Fetches latest values from FRED® API and updates indicators.js.
- * Uses fred/series/updates as a pre-filter to skip unchanged series.
+ * Fetches latest values from FRED® API and writes data/observations.json.
+ * Never modifies any .js source files.
  *
  * Usage:
- *   node update-indicators.js             # update indicators.js
+ *   node update-indicators.js             # update observations.json
  *   node update-indicators.js --dry-run   # show changes without writing
  *
  * Requires: FRED_API_KEY in .env file
@@ -20,10 +20,13 @@ const fs = require('fs');
 const path = require('path');
 
 // ── Config ──────────────────────────────────────────────────────
-const INDICATORS_FILE = path.join(__dirname, 'indicators.js');
+const OBSERVATIONS_FILE = path.join(__dirname, 'data', 'observations.json');
 const ENV_FILE = path.join(__dirname, '.env');
 const FRED_BASE = 'https://api.stlouisfed.org/fred';
 const DRY_RUN = process.argv.includes('--dry-run');
+
+// Import indicator definitions directly (no regex parsing needed)
+const { INDICATORS } = require('./indicators.js');
 
 // Rate limiting: max 1 request per 200ms to be respectful
 const REQUEST_DELAY_MS = 200;
@@ -60,22 +63,6 @@ function sleep(ms) {
 // ── FRED API calls ──────────────────────────────────────────────
 
 /**
- * Get recently updated series from FRED (last 2 weeks).
- * Returns a Set of series IDs that had updates.
- */
-async function getRecentlyUpdatedSeries(apiKey) {
-    const url = `${FRED_BASE}/series/updates?api_key=${apiKey}&file_type=json&filter_value=macro&limit=1000`;
-    try {
-        const data = await fetchJSON(url);
-        const ids = new Set(data.seriess.map(s => s.id));
-        return ids;
-    } catch (err) {
-        console.warn('⚠️  Could not fetch series/updates, will check all series:', err.message);
-        return null; // null means "check everything"
-    }
-}
-
-/**
  * Get latest observation for a single FRED series.
  */
 async function getLatestObservation(seriesId, apiKey, units = 'lin') {
@@ -104,7 +91,7 @@ async function getSeriesMetadata(seriesId, apiKey) {
 /**
  * Format a raw FRED value according to the indicator's unit type.
  */
-function formatValue(rawValue, indicatorId, indicator) {
+function formatValue(rawValue, indicator) {
     const val = parseFloat(rawValue);
     if (isNaN(val)) return rawValue;
 
@@ -181,50 +168,34 @@ async function main() {
     console.log(`\n📊 FRED Indicator Update ${DRY_RUN ? '(DRY RUN)' : ''}`);
     console.log(`   ${new Date().toISOString()}\n`);
 
-    // Step 1: Read current indicators.js
-    const indicatorsSource = fs.readFileSync(INDICATORS_FILE, 'utf-8');
-
-    // Parse INDICATORS object — we'll use regex replacement on the source text
-    // to preserve formatting. First, extract all indicators with fredSeriesId.
-    const indicatorPattern = /['"]([^'"]+)['"]:\s*\{[\s\S]*?fredSeriesId:\s*(?:'([^']*)'|"([^"]*)"|\[([^\]]*)\]|null)/g;
-    const fredIndicators = [];
-    let match;
-
-    while ((match = indicatorPattern.exec(indicatorsSource)) !== null) {
-        const id = match[1];
-        let seriesId = match[2] || match[3] || null;
-        const arrayStr = match[4];
-
-        if (arrayStr) {
-            // Array of series IDs (e.g., fed funds target)
-            seriesId = arrayStr.match(/['"]([^'"]+)['"]/g)?.map(s => s.replace(/['"]/g, '')) || [];
+    // Step 1: Load existing observations (if any)
+    let existingData = { lastUpdated: null, observations: {} };
+    if (fs.existsSync(OBSERVATIONS_FILE)) {
+        try {
+            existingData = JSON.parse(fs.readFileSync(OBSERVATIONS_FILE, 'utf-8'));
+        } catch (e) {
+            console.warn('⚠️  Could not parse existing observations.json, starting fresh');
         }
+    }
 
-        if (seriesId === null || seriesId === 'null') continue;
-        fredIndicators.push({ id, seriesId });
+    // Step 2: Identify FRED-linked indicators from imported definitions
+    const fredIndicators = [];
+    for (const [id, ind] of Object.entries(INDICATORS)) {
+        const seriesId = ind.schedule?.fredSeriesId;
+        if (seriesId) {
+            fredIndicators.push({ id, seriesId, indicator: ind });
+        }
     }
 
     console.log(`   Found ${fredIndicators.length} FRED-linked indicators\n`);
 
-    // Step 2: Fetch and update each indicator
-    // Note: We intentionally fetch ALL series every run (~20 calls).
-    // The fred/series/updates endpoint only returns the top 1000 most recently
-    // updated series across all of FRED, so our series can be missed.
-
     // Step 3: Fetch and update each indicator
-    let updatedSource = indicatorsSource;
+    const newObservations = { ...existingData.observations };
     const changes = [];
     const copyrightWarnings = [];
 
-    for (const { id, seriesId } of fredIndicators) {
-        // Extract indicator info from source for formatting
-        const unitMatch = indicatorsSource.match(new RegExp(`'${id}':[\\s\\S]*?unit:\\s*'([^']*)'`));
-        const unit = unitMatch ? unitMatch[1] : 'unknown';
-
-        const freqMatch = indicatorsSource.match(new RegExp(`'${id}':[\\s\\S]*?frequency:\\s*'([^']*)'`));
-        const frequency = freqMatch ? freqMatch[1] : 'daily';
-
-        const indicator = { unit };
+    for (const { id, seriesId, indicator } of fredIndicators) {
+        const frequency = indicator.schedule?.frequency || 'daily';
 
         try {
             let newValue, newPeriod;
@@ -244,17 +215,18 @@ async function main() {
                 }
             } else {
                 // Single series
-                const obs = await getLatestObservation(seriesId, apiKey, getUnitsParam(id, indicatorsSource));
+                const units = indicator.schedule?.fredUnits || 'lin';
+                const obs = await getLatestObservation(seriesId, apiKey, units);
                 await sleep(REQUEST_DELAY_MS);
 
                 if (obs && obs.value !== '.') {
-                    newValue = formatValue(obs.value, id, indicator);
+                    newValue = formatValue(obs.value, indicator);
                     newPeriod = formatPeriod(obs.date, frequency);
 
                     if (newValue === null) continue; // Skip if special handling needed
                 }
 
-                // Check for copyright (first run only — just log warnings)
+                // Check for copyright (just log warnings)
                 const meta = await getSeriesMetadata(seriesId, apiKey);
                 await sleep(REQUEST_DELAY_MS);
                 if (meta && meta.notes && meta.notes.toLowerCase().includes('copyright')) {
@@ -263,30 +235,21 @@ async function main() {
             }
 
             if (newValue && newPeriod) {
-                // Find and replace the observation in the source
-                const obsPattern = new RegExp(
-                    `('${id}':[\\s\\S]*?observation:\\s*\\{\\s*value:\\s*)('[^']*')(\\s*,\\s*period:\\s*)('[^']*')`,
-                );
+                const oldObs = existingData.observations[id];
+                const oldValue = oldObs?.value;
+                const oldPeriod = oldObs?.period;
 
-                const obsMatch = updatedSource.match(obsPattern);
-                if (obsMatch) {
-                    const oldValue = obsMatch[2].replace(/'/g, '');
-                    const oldPeriod = obsMatch[4].replace(/'/g, '');
-
-                    if (oldValue !== newValue || oldPeriod !== newPeriod) {
-                        updatedSource = updatedSource.replace(
-                            obsPattern,
-                            `$1'${newValue}'$3'${newPeriod}'`
-                        );
-                        changes.push({
-                            id,
-                            oldValue,
-                            newValue,
-                            oldPeriod,
-                            newPeriod,
-                        });
-                    }
+                if (oldValue !== newValue || oldPeriod !== newPeriod) {
+                    changes.push({
+                        id,
+                        oldValue: oldValue || '(none)',
+                        newValue,
+                        oldPeriod: oldPeriod || '(none)',
+                        newPeriod,
+                    });
                 }
+
+                newObservations[id] = { value: newValue, period: newPeriod };
             }
         } catch (err) {
             console.error(`   ❌ ${id}: ${err.message}`);
@@ -317,21 +280,24 @@ async function main() {
 
     // Step 5: Write if not dry run
     if (changes.length > 0 && !DRY_RUN) {
-        fs.writeFileSync(INDICATORS_FILE, updatedSource, 'utf-8');
-        console.log(`\n💾 Written to ${path.basename(INDICATORS_FILE)}`);
+        const outputData = {
+            lastUpdated: new Date().toISOString(),
+            observations: newObservations,
+        };
+
+        // Ensure data directory exists
+        const dataDir = path.dirname(OBSERVATIONS_FILE);
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+
+        fs.writeFileSync(OBSERVATIONS_FILE, JSON.stringify(outputData, null, 2) + '\n', 'utf-8');
+        console.log(`\n💾 Written to ${path.relative(__dirname, OBSERVATIONS_FILE)}`);
     } else if (DRY_RUN && changes.length > 0) {
         console.log('\n🔒 Dry run — no files modified.');
     }
 
     console.log('');
-}
-
-/**
- * Extract the fredUnits param for a given indicator from source.
- */
-function getUnitsParam(indicatorId, source) {
-    const match = source.match(new RegExp(`'${indicatorId}':[\\s\\S]*?fredUnits:\\s*'([^']*)'`));
-    return match ? match[1] : 'lin';
 }
 
 // ── Run ─────────────────────────────────────────────────────────

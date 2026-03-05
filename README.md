@@ -4,15 +4,14 @@ An interactive web app that visualizes **macroeconomic causal loops** — how ma
 
 ## Quick Start
 
-Serve locally:
+1. Serve locally. Then visit the URL shown (typically `http://localhost:3000`).
 
 ```bash
 npx -y serve .
 ```
 
-Then visit the URL shown (typically `http://localhost:3000`).
 
-Update indicator data (requires a [FRED® API key](https://fred.stlouisfed.org/docs/api/api_key.html) in `.env`):
+2. Update current indicator data from government sources (requires a [FRED® API key](https://fred.stlouisfed.org/docs/api/api_key.html) in `.env`):
 
 ```bash
 node update-indicators.js --dry-run   # preview changes
