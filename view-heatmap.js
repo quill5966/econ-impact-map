@@ -224,10 +224,25 @@ function showHeatmapTooltip(event, indicatorId, lag) {
 
     document.body.appendChild(tooltip);
 
-    // Position near the cell
+    // Position near the cell, clamped to viewport
     const rect = event.target.getBoundingClientRect();
-    tooltip.style.left = `${rect.left + rect.width / 2}px`;
-    tooltip.style.top = `${rect.bottom + 8}px`;
+    const ttRect = tooltip.getBoundingClientRect();
+    const margin = 12;
+
+    // Vertical: prefer below, flip above if it would overflow
+    let top = rect.bottom + 8;
+    if (top + ttRect.height > window.innerHeight - margin) {
+        top = rect.top - ttRect.height - 8;
+    }
+
+    // Horizontal: center on cell, clamp to viewport edges
+    let left = rect.left + rect.width / 2;
+    const halfW = ttRect.width / 2;
+    if (left - halfW < margin) left = halfW + margin;
+    if (left + halfW > window.innerWidth - margin) left = window.innerWidth - halfW - margin;
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
 }
 
 function hideHeatmapTooltip() {
