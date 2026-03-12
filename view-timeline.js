@@ -89,13 +89,14 @@ function renderTimelineView(container) {
             if (!ind) return;
 
             const arrow = imp.sign === 'up' ? '↑' : imp.sign === 'down' ? '↓' : '↕';
-            const dirClass = `dir-${imp.sign}`;
+            const sentiment = getSemanticSentiment(imp.targetIndicatorId, imp.sign);
+            const dirClass = `dir-${sentiment}`;
             const themeLabel = TIMELINE_THEME_LABELS[ind.category] || ind.category;
-            const bgClass = imp.sign === 'up'
-                ? 'dir-bg-up'
-                : imp.sign === 'down'
-                    ? 'dir-bg-down'
-                    : 'dir-bg-mixed';
+            const bgClass = sentiment === 'positive'
+                ? 'dir-bg-positive'
+                : sentiment === 'negative'
+                    ? 'dir-bg-negative'
+                    : 'dir-bg-neutral';
 
             sectionsHtml += `<div class="timeline-card ${bgClass}" data-index="${cardIndex}" data-indicator="${ind.id}" style="animation-delay: ${Math.min(cardIndex * 150, 800)}ms">
                 <div class="tc-main">

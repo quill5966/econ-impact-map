@@ -22,20 +22,20 @@ let heatmapActiveThemeFilter = null;
 let heatmapHiddenColumns = new Set();
 
 /**
- * Get the impact color for a cell based on direction and magnitude.
+ * Get the impact color for a cell based on semantic sentiment and magnitude.
  * Returns a CSS color string.
  */
-function getHeatmapCellColor(sign, strength) {
-    if (!sign || sign === 'neutral') return '#1F2330';
+function getHeatmapCellColor(sentiment, strength) {
+    if (!sentiment || sentiment === 'neutral') return '#1F2330';
 
     // Clamp strength to 1–5 (darker = higher severity)
     const s = Math.min(Math.max(Math.round(strength), 1), 5);
 
-    if (sign === 'up') {
+    if (sentiment === 'positive') {
         // Green fills — darker = stronger
         const fills = ['#1DB954', '#17A349', '#0F7A35', '#0A5226', '#073D1C'];
         return fills[s - 1];
-    } else if (sign === 'down') {
+    } else if (sentiment === 'negative') {
         // Red fills — darker = stronger
         const fills = ['#E5383B', '#C1121F', '#8B0000', '#5C0A0A', '#3A0505'];
         return fills[s - 1];
@@ -49,10 +49,10 @@ function getHeatmapCellColor(sign, strength) {
 /**
  * Get the text color for a direction badge inside a cell.
  */
-function getHeatmapDirectionColor(sign) {
-    if (sign === 'up') return '#4ADE80';
-    if (sign === 'down') return '#F87171';
-    if (sign === 'mixed') return '#EAB308';
+function getHeatmapDirectionColor(sentiment) {
+    if (sentiment === 'positive') return '#4ADE80';
+    if (sentiment === 'negative') return '#F87171';
+    if (sentiment === 'neutral') return '#EAB308';
     return '#6B7280';
 }
 
@@ -125,8 +125,9 @@ function renderHeatmapView(container) {
                 }
 
                 if (impact) {
-                    const bgColor = getHeatmapCellColor(impact.sign, impact.strength);
-                    const dirColor = getHeatmapDirectionColor(impact.sign);
+                    const sentiment = getSemanticSentiment(ind.id, impact.sign);
+                    const bgColor = getHeatmapCellColor(sentiment, impact.strength);
+                    const dirColor = getHeatmapDirectionColor(sentiment);
                     const arrow = impact.sign === 'up' ? '↑' : impact.sign === 'down' ? '↓' : '↕';
                     tableHtml += `<td class="heatmap-cell heatmap-cell-active" style="background:${bgColor}" 
                         data-indicator="${ind.id}" data-lag="${horizon.id}"
@@ -200,7 +201,8 @@ function showHeatmapTooltip(event, indicatorId, lag) {
     if (!ind || !impact) return;
 
     const arrow = impact.sign === 'up' ? '↑' : impact.sign === 'down' ? '↓' : '↕';
-    const dirColor = getHeatmapDirectionColor(impact.sign);
+    const sentiment = getSemanticSentiment(indicatorId, impact.sign);
+    const dirColor = getHeatmapDirectionColor(sentiment);
     const lagLabel = getLagLabel(impact.lag);
 
     const tooltip = document.createElement('div');

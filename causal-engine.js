@@ -110,3 +110,16 @@ function getSignSymbol(sign) {
     if (sign === 'down') return '↓';
     return '↕';
 }
+
+/**
+ * Determine semantic sentiment: is this impact a good or bad outcome?
+ * Uses the indicator's goodDirection to decide.
+ * @param {string} indicatorId - the indicator being impacted
+ * @param {string} impactSign - 'up', 'down', or 'mixed'
+ * @returns {'positive'|'negative'|'neutral'}
+ */
+function getSemanticSentiment(indicatorId, impactSign) {
+    const ind = INDICATORS[indicatorId];
+    if (!ind || !ind.goodDirection || impactSign === 'mixed') return 'neutral';
+    return (impactSign === ind.goodDirection) ? 'positive' : 'negative';
+}

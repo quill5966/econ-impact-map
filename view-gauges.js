@@ -20,8 +20,9 @@ function aggregateThemeScore(impacts, themeIndicatorIds) {
 
     let totalWeighted = 0;
     themeImpacts.forEach(imp => {
-        const sign = imp.sign === 'up' ? 1 : imp.sign === 'down' ? -1 : 0;
-        totalWeighted += sign * imp.strength;
+        const sentiment = getSemanticSentiment(imp.targetIndicatorId, imp.sign);
+        const sentimentSign = sentiment === 'positive' ? 1 : sentiment === 'negative' ? -1 : 0;
+        totalWeighted += sentimentSign * imp.strength;
     });
 
     // Normalize to -5..+5 range
@@ -181,7 +182,8 @@ function renderGaugesView(container) {
             const ind = INDICATORS[imp.targetIndicatorId];
             if (!ind) return '';
             const arrow = imp.sign === 'up' ? '↑' : imp.sign === 'down' ? '↓' : '↕';
-            const dirClass = imp.sign === 'up' ? 'dir-up' : imp.sign === 'down' ? 'dir-down' : 'dir-mixed';
+            const sentiment = getSemanticSentiment(imp.targetIndicatorId, imp.sign);
+            const dirClass = `dir-${sentiment}`;
             return `<div class="gauge-detail-card">
                 <span class="gdc-arrow ${dirClass}">${arrow}</span>
                 <span class="gdc-name">${ind.name}</span>

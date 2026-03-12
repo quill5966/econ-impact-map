@@ -467,28 +467,28 @@ body {
   border-color: rgba(108, 99, 255, 0.4);
 }
 
-/* ===== REUSABLE DIRECTION COLOR UTILITIES ===== */
-.dir-up {
+/* ===== REUSABLE SEMANTIC COLOR UTILITIES ===== */
+.dir-positive {
   color: var(--impact-positive);
 }
 
-.dir-down {
+.dir-negative {
   color: var(--impact-negative);
 }
 
-.dir-mixed {
+.dir-neutral {
   color: #eab308;
 }
 
-.dir-bg-up {
+.dir-bg-positive {
   background: rgba(10, 82, 38, 0.15);
 }
 
-.dir-bg-down {
+.dir-bg-negative {
   background: rgba(92, 10, 10, 0.15);
 }
 
-.dir-bg-mixed {
+.dir-bg-neutral {
   background: rgba(107, 114, 128, 0.10);
 }
 
