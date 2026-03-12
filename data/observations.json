@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-05T20:54:13.589Z",
+  "lastUpdated": "2026-03-12T02:47:17.181Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
@@ -14,12 +14,12 @@
       "period": "Jan 28, 2026"
     },
     "front-end-yields-2y": {
-      "value": "3.51%",
-      "period": "Mar 3, 2026"
+      "value": "3.57%",
+      "period": "Mar 10, 2026"
     },
     "long-end-yields-10y": {
-      "value": "4.06%",
-      "period": "Mar 3, 2026"
+      "value": "4.15%",
+      "period": "Mar 10, 2026"
     },
     "mortgage-rates": {
       "value": "6.00%",
@@ -34,16 +34,16 @@
       "period": "Dec 2025"
     },
     "corporate-borrowing": {
-      "value": "IG Spread 82bp",
-      "period": "Mar 4, 2026"
+      "value": "IG Spread 84bp",
+      "period": "Mar 10, 2026"
     },
     "gdp-growth": {
       "value": "+1.4%",
       "period": "Q4 2025"
     },
     "unemployment": {
-      "value": "4.30%",
-      "period": "Jan 2026"
+      "value": "4.40%",
+      "period": "Feb 2026"
     },
     "job-openings": {
       "value": "6.5M",
@@ -51,11 +51,11 @@
     },
     "wage-growth": {
       "value": "+0.4% YoY",
-      "period": "Jan 2026"
+      "period": "Feb 2026"
     },
     "core-cpi": {
       "value": "+2.5% YoY",
-      "period": "Jan 2026"
+      "period": "Feb 2026"
     },
     "core-ppi": {
       "value": "+3.6% YoY",
@@ -63,7 +63,7 @@
     },
     "headline-cpi": {
       "value": "+2.4% YoY",
-      "period": "Jan 2026"
+      "period": "Feb 2026"
     },
     "headline-ppi": {
       "value": "+2.8% YoY",
@@ -78,24 +78,24 @@
       "period": "Dec 2025"
     },
     "oil-barrel-price": {
-      "value": "$71.13",
-      "period": "Mar 2, 2026"
+      "value": "$94.65",
+      "period": "Mar 9, 2026"
     },
     "dow": {
-      "value": "48,739",
-      "period": "Mar 4, 2026"
+      "value": "47,417",
+      "period": "Mar 11, 2026"
     },
     "nasdaq": {
-      "value": "22,807",
-      "period": "Mar 4, 2026"
+      "value": "22,697",
+      "period": "Mar 10, 2026"
     },
     "sp-500": {
-      "value": "6,870",
-      "period": "Mar 4, 2026"
+      "value": "6,776",
+      "period": "Mar 11, 2026"
     },
     "vix": {
-      "value": "21.15",
-      "period": "Mar 4, 2026"
+      "value": "24.93",
+      "period": "Mar 10, 2026"
     }
   }
 }
