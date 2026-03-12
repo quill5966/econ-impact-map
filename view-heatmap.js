@@ -28,20 +28,20 @@ let heatmapHiddenColumns = new Set();
 function getHeatmapCellColor(sign, strength) {
     if (!sign || sign === 'neutral') return '#1F2330';
 
-    // Clamp strength to 1–5 (5 uses the strongest fill)
+    // Clamp strength to 1–5 (darker = higher severity)
     const s = Math.min(Math.max(Math.round(strength), 1), 5);
 
     if (sign === 'up') {
-        // Green fills — graduated by strength
-        const fills = ['#0A5226', '#0F7A35', '#17A349', '#1DB954', '#1DB954'];
+        // Green fills — darker = stronger
+        const fills = ['#1DB954', '#17A349', '#0F7A35', '#0A5226', '#073D1C'];
         return fills[s - 1];
     } else if (sign === 'down') {
-        // Red fills
-        const fills = ['#5C0A0A', '#8B0000', '#C1121F', '#E5383B', '#E5383B'];
+        // Red fills — darker = stronger
+        const fills = ['#E5383B', '#C1121F', '#8B0000', '#5C0A0A', '#3A0505'];
         return fills[s - 1];
     } else {
-        // Mixed — muted gold
-        const fills = ['#3D3510', '#5C4F18', '#7A6920', '#9B8528', '#9B8528'];
+        // Mixed — muted gold, darker = stronger
+        const fills = ['#9B8528', '#7A6920', '#5C4F18', '#3D3510', '#2A2309'];
         return fills[s - 1];
     }
 }
