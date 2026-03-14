@@ -126,10 +126,10 @@ let previousScenarioState = null; // cached for undo
 let dropdownOpen = false;
 let modifyMode = false;             // true while user is editing scenario/regime in dropdown
 
-// Get the formatted date string for the default banner state
+// Get the formatted date string for the default banner state (uses observation data timestamp)
 function getFormattedDate() {
-    const now = new Date();
-    return now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const date = observationsLastUpdated ? new Date(observationsLastUpdated) : new Date();
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // Build the scenario dropdown HTML (scenario list + controls)

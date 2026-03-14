@@ -264,11 +264,14 @@ const NODE_THEMES = [
 ];
 
 // ── Load observation data from JSON ─────────────────────────────
+let observationsLastUpdated = null;
+
 async function loadObservations() {
     try {
         const resp = await fetch('data/observations.json');
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
+        observationsLastUpdated = data.lastUpdated || null;
         for (const [id, obs] of Object.entries(data.observations)) {
             if (INDICATORS[id]) {
                 INDICATORS[id].observation = obs;
