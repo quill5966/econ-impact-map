@@ -214,8 +214,9 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -649,7 +650,7 @@ body {
 
 @media (max-width: 1100px) {
   .banner-meta {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .banner-title {
