@@ -342,11 +342,28 @@ function renderBanner() {
             <div class="banner-default">
                 <span class="banner-default-icon">📊</span>
                 <span class="banner-default-text">Showing current economic conditions as of ${getFormattedDate()}</span>
-                <button class="banner-btn banner-btn-primary" id="runScenarioBtn">+ Run a Scenario</button>
+                ${modifyMode
+                    ? '<button class="banner-btn banner-btn-confirm" id="confirmInitialBtn">✓ Confirm</button>'
+                    : '<button class="banner-btn banner-btn-primary" id="runScenarioBtn">+ Run a Scenario</button>'
+                }
             </div>
         `;
 
-        document.getElementById('runScenarioBtn').addEventListener('click', () => toggleScenarioDropdown(true));
+        if (modifyMode) {
+            document.getElementById('confirmInitialBtn').addEventListener('click', () => {
+                const activeBtn = document.querySelector('.dropdown-scenario-btn.active');
+                if (!activeBtn) return;
+                modifyMode = false;
+                executeScenario(activeBtn.dataset.scenarioId);
+                toggleScenarioDropdown(false);
+            });
+        } else {
+            document.getElementById('runScenarioBtn').addEventListener('click', () => {
+                modifyMode = true;
+                renderBanner();
+                toggleScenarioDropdown(true);
+            });
+        }
     }
 }
 
