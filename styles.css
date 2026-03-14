@@ -302,6 +302,18 @@ body {
   border-color: var(--accent-hover);
 }
 
+.banner-btn-confirm {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.5);
+  color: #4ADE80;
+}
+
+.banner-btn-confirm:hover {
+  background: rgba(74, 222, 128, 0.22);
+  border-color: #4ADE80;
+  color: #6EE7A0;
+}
+
 .banner-btn-secondary {
   background: var(--bg-surface2);
   border: 1px solid var(--border-subtle);
@@ -323,6 +335,14 @@ body {
 .banner-btn-undo:hover {
   background: rgba(108, 99, 255, 0.25);
   border-color: var(--accent);
+}
+
+/* ── Banner action button group ── */
+.banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 /* ===== SCENARIO DROPDOWN ===== */

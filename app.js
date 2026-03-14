@@ -124,6 +124,7 @@ function getDefaultView(isScenarioActivation, isReset, newScenarioId) {
 
 let previousScenarioState = null; // cached for undo
 let dropdownOpen = false;
+let modifyMode = false;             // true while user is editing scenario/regime in dropdown
 
 // Get the formatted date string for the default banner state
 function getFormattedDate() {
@@ -197,13 +198,17 @@ function buildScenarioDropdown() {
         btn.addEventListener('click', () => {
             dropdown.querySelectorAll('.dropdown-scenario-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
-            executeScenario(btn.dataset.scenarioId);
-            toggleScenarioDropdown(false);
+            if (!modifyMode) {
+                executeScenario(btn.dataset.scenarioId);
+                toggleScenarioDropdown(false);
+            }
         });
     });
 
-    // Regime select
-    document.getElementById('regimeSelect').addEventListener('change', rerunActiveScenario);
+    // Regime select — skip auto-rerun in modify mode
+    document.getElementById('regimeSelect').addEventListener('change', () => {
+        if (!modifyMode) rerunActiveScenario();
+    });
 }
 
 function toggleScenarioDropdown(forceState) {
@@ -219,7 +224,47 @@ function toggleScenarioDropdown(forceState) {
     } else {
         dropdown.classList.remove('open');
         backdrop.classList.remove('visible');
+        // Exit modify mode when dropdown closes (e.g. backdrop click)
+        if (modifyMode) {
+            modifyMode = false;
+            renderBanner();
+        }
     }
+}
+
+function openModifyDropdown() {
+    if (!activeScenarioResult) return;
+    const ctx = activeScenarioResult.context;
+
+    modifyMode = true;
+
+    // Sync dropdown to current state: highlight active scenario button
+    document.querySelectorAll('.dropdown-scenario-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.scenarioId === ctx.scenarioId);
+    });
+
+    // Sync regime select
+    const regimeSelect = document.getElementById('regimeSelect');
+    if (regimeSelect) regimeSelect.value = ctx.regime;
+
+    // Re-render banner to swap Modify → Confirm
+    renderBanner();
+    toggleScenarioDropdown(true);
+}
+
+function confirmModification() {
+    // Read the selected scenario from the dropdown
+    const activeBtn = document.querySelector('.dropdown-scenario-btn.active');
+    if (!activeBtn) return;
+
+    const selectedScenarioId = activeBtn.dataset.scenarioId;
+
+    // Exit modify mode first
+    modifyMode = false;
+
+    // Execute the scenario (regime select already has the chosen value)
+    executeScenario(selectedScenarioId);
+    toggleScenarioDropdown(false);
 }
 
 // Render the scenario banner based on current state
@@ -250,10 +295,21 @@ function renderBanner() {
                     </div>
                     <div class="banner-summary">${summary}</div>
                 </div>
-                <button class="banner-btn banner-btn-secondary" id="resetScenarioBtn">✕ Reset</button>
+                <div class="banner-actions">
+                    ${modifyMode
+                        ? '<button class="banner-btn banner-btn-confirm" id="confirmScenarioBtn">✓ Confirm</button>'
+                        : '<button class="banner-btn banner-btn-primary" id="modifyScenarioBtn">✎ Modify</button>'
+                    }
+                    <button class="banner-btn banner-btn-secondary" id="resetScenarioBtn">✕ Reset</button>
+                </div>
             </div>
         `;
 
+        if (modifyMode) {
+            document.getElementById('confirmScenarioBtn').addEventListener('click', confirmModification);
+        } else {
+            document.getElementById('modifyScenarioBtn').addEventListener('click', openModifyDropdown);
+        }
         document.getElementById('resetScenarioBtn').addEventListener('click', resetScenario);
 
     } else if (previousScenarioState) {
