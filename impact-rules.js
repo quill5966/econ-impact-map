@@ -41,10 +41,11 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Hawkish surprise pushes 10Y up via term premium, but recession fears can offset.',
+        explanationTemplate: 'Hawkish surprise pushes 10Y up via term premium, but growing recession fears push it down (curve flattening).',
         conditionalOn: null, exceptions: ['At zero lower bound, effect is muted'],
         regimeOverrides: {
             recession_risk: { sign: 'down', strength: 2, confidence: 3 },
+            late_cycle: { sign: 'mixed', strength: 2, confidence: 3 },
         },
         surpriseScaling: { small: 0.7, medium: 1.0, large: 1.3 },
     },
@@ -67,7 +68,9 @@ const IMPACT_RULES = [
         mechanism: 'discount_rate_duration_assets',
         explanationTemplate: 'Higher rates raise discount rates, pressuring equity valuations.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 4 },
+        },
         surpriseScaling: { small: 0.6, medium: 1.0, large: 1.5 },
     },
     {
@@ -78,7 +81,9 @@ const IMPACT_RULES = [
         mechanism: 'discount_rate_duration_assets',
         explanationTemplate: 'Growth/tech stocks are especially rate-sensitive due to long-duration cash flows.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 5 },
+        },
         surpriseScaling: { small: 0.6, medium: 1.0, large: 1.5 },
     },
     {
@@ -89,7 +94,9 @@ const IMPACT_RULES = [
         mechanism: 'discount_rate_duration_assets',
         explanationTemplate: 'Dow falls but less than Nasdaq — its value-heavy composition is less rate-sensitive.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+        },
         surpriseScaling: null,
     },
     {
@@ -100,7 +107,9 @@ const IMPACT_RULES = [
         mechanism: 'risk_sentiment_volatility',
         explanationTemplate: 'Hawkish surprises increase uncertainty, lifting volatility.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 4 },
+        },
         surpriseScaling: { small: 0.5, medium: 1.0, large: 1.5 },
     },
     {
@@ -111,7 +120,9 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Higher benchmark yields widen credit spreads and raise corporate borrowing costs.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 4 },
+        },
         surpriseScaling: null,
     },
     {
@@ -133,7 +144,9 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Tighter financial conditions reduce disposable income and credit access.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+        },
         surpriseScaling: null,
     },
     {
@@ -144,7 +157,9 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Tighter conditions slow investment and consumption, dragging on GDP over time.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+        },
         surpriseScaling: null,
     },
     {
