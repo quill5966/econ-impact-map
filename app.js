@@ -89,9 +89,18 @@ function switchView(viewId) {
             renderHeatmapView(viewContent);
     }
 
-    // Append FRED® API footer inside the scrollable area
-    const footer = document.querySelector('.api-footer');
-    if (footer) viewContent.appendChild(footer);
+    // Append FRED® API footer inside the scrollable area.
+    // Cache the HTML on first access since innerHTML wipes destroy the node.
+    if (!switchView._footerHtml) {
+        const footerEl = document.querySelector('.api-footer');
+        if (footerEl) {
+            switchView._footerHtml = footerEl.outerHTML;
+            footerEl.remove(); // remove original from body
+        }
+    }
+    if (switchView._footerHtml) {
+        viewContent.insertAdjacentHTML('beforeend', switchView._footerHtml);
+    }
 }
 
 /**
