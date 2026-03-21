@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-12T02:47:17.181Z",
+  "lastUpdated": "2026-03-21T19:20:32.341Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
@@ -14,31 +14,31 @@
       "period": "Jan 28, 2026"
     },
     "front-end-yields-2y": {
-      "value": "3.57%",
-      "period": "Mar 10, 2026"
+      "value": "3.79%",
+      "period": "Mar 19, 2026"
     },
     "long-end-yields-10y": {
-      "value": "4.15%",
-      "period": "Mar 10, 2026"
+      "value": "4.25%",
+      "period": "Mar 19, 2026"
     },
     "mortgage-rates": {
-      "value": "6.00%",
-      "period": "Mar 5, 2026"
+      "value": "6.22%",
+      "period": "Mar 19, 2026"
     },
     "housing-starts": {
-      "value": "1.40M SAAR",
-      "period": "Dec 2025"
+      "value": "1.49M SAAR",
+      "period": "Jan 2026"
     },
     "consumer-spending": {
       "value": "+0.4% MoM",
-      "period": "Dec 2025"
+      "period": "Jan 2026"
     },
     "corporate-borrowing": {
-      "value": "IG Spread 84bp",
-      "period": "Mar 10, 2026"
+      "value": "IG Spread 90bp",
+      "period": "Mar 19, 2026"
     },
     "gdp-growth": {
-      "value": "+1.4%",
+      "value": "+0.7%",
       "period": "Q4 2025"
     },
     "unemployment": {
@@ -46,8 +46,8 @@
       "period": "Feb 2026"
     },
     "job-openings": {
-      "value": "6.5M",
-      "period": "Dec 2025"
+      "value": "6.9M",
+      "period": "Jan 2026"
     },
     "wage-growth": {
       "value": "+0.4% YoY",
@@ -58,44 +58,44 @@
       "period": "Feb 2026"
     },
     "core-ppi": {
-      "value": "+3.6% YoY",
-      "period": "Jan 2026"
+      "value": "+3.9% YoY",
+      "period": "Feb 2026"
     },
     "headline-cpi": {
       "value": "+2.4% YoY",
       "period": "Feb 2026"
     },
     "headline-ppi": {
+      "value": "+3.4% YoY",
+      "period": "Feb 2026"
+    },
+    "pce": {
       "value": "+2.8% YoY",
       "period": "Jan 2026"
     },
-    "pce": {
-      "value": "+2.9% YoY",
-      "period": "Dec 2025"
-    },
     "core-pce": {
-      "value": "+3.0% YoY",
-      "period": "Dec 2025"
+      "value": "+3.1% YoY",
+      "period": "Jan 2026"
     },
     "oil-barrel-price": {
-      "value": "$94.65",
-      "period": "Mar 9, 2026"
+      "value": "$93.39",
+      "period": "Mar 16, 2026"
     },
     "dow": {
-      "value": "47,417",
-      "period": "Mar 11, 2026"
+      "value": "45,577",
+      "period": "Mar 20, 2026"
     },
     "nasdaq": {
-      "value": "22,697",
-      "period": "Mar 10, 2026"
+      "value": "21,648",
+      "period": "Mar 20, 2026"
     },
     "sp-500": {
-      "value": "6,776",
-      "period": "Mar 11, 2026"
+      "value": "6,506",
+      "period": "Mar 20, 2026"
     },
     "vix": {
-      "value": "24.93",
-      "period": "Mar 10, 2026"
+      "value": "24.06",
+      "period": "Mar 19, 2026"
     }
   }
 }
