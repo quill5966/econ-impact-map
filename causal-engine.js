@@ -39,6 +39,12 @@ function runScenario(context) {
             reasons.push(`regime override applied: ${context.regime}`);
         }
 
+        // 2b. Resolve sentiment override (regime can flip semantic color)
+        let sentimentOverride = null;
+        if (rule.regimeOverrides && rule.regimeOverrides[context.regime] && rule.regimeOverrides[context.regime].sentiment) {
+            sentimentOverride = rule.regimeOverrides[context.regime].sentiment;
+        }
+
         // 3. Apply surprise scaling
         const sizeKey = ['small', 'medium', 'large'][context.surpriseSize - 1] || 'medium';
         if (rule.surpriseScaling && rule.surpriseScaling[sizeKey] !== undefined) {
@@ -66,6 +72,7 @@ function runScenario(context) {
             explanationShort,
             explanationSource: 'static_template',
             reasonsApplied: reasons,
+            sentimentOverride,
         };
     });
 
@@ -118,7 +125,8 @@ function getSignSymbol(sign) {
  * @param {string} impactSign - 'up', 'down', or 'mixed'
  * @returns {'positive'|'negative'|'neutral'}
  */
-function getSemanticSentiment(indicatorId, impactSign) {
+function getSemanticSentiment(indicatorId, impactSign, sentimentOverride) {
+    if (sentimentOverride) return sentimentOverride;
     const ind = INDICATORS[indicatorId];
     if (!ind || !ind.goodDirection || impactSign === 'mixed') return 'neutral';
     return (impactSign === ind.goodDirection) ? 'positive' : 'negative';

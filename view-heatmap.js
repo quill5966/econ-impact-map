@@ -125,7 +125,7 @@ function renderHeatmapView(container) {
                 }
 
                 if (impact) {
-                    const sentiment = getSemanticSentiment(ind.id, impact.sign);
+                    const sentiment = getSemanticSentiment(ind.id, impact.sign, impact.sentimentOverride);
                     const bgColor = getHeatmapCellColor(sentiment, impact.strength);
                     const dirColor = getHeatmapDirectionColor(sentiment);
                     const arrow = impact.sign === 'up' ? '↑' : impact.sign === 'down' ? '↓' : '↕';
@@ -201,7 +201,7 @@ function showHeatmapTooltip(event, indicatorId, lag) {
     if (!ind || !impact) return;
 
     const arrow = impact.sign === 'up' ? '↑' : impact.sign === 'down' ? '↓' : '↕';
-    const sentiment = getSemanticSentiment(indicatorId, impact.sign);
+    const sentiment = getSemanticSentiment(indicatorId, impact.sign, impact.sentimentOverride);
     const dirColor = getHeatmapDirectionColor(sentiment);
     const lagLabel = getLagLabel(impact.lag);
 

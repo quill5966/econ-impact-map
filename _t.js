@@ -1,3 +1,244 @@
+// ===== MECHANISM REGISTRY =====
+// Reusable causal mechanisms shared across impact rules.
+// Each mechanism has templated descriptions using {scenarioLabel} and {targetLabel} placeholders.
+// Static, versioned — changes require an app update.
+
+const MECHANISMS = [
+    {
+        id: 'direct_policy_action',
+        name: 'Direct policy action',
+        tooltipTemplate: '{scenarioLabel} directly changes {targetLabel}.',
+        longTemplate:
+            'This is a direct policy lever, so the change is mechanical and immediate. The Fed sets this rate by fiat.',
+    },
+    {
+        id: 'policy_path_repricing',
+        name: 'Policy path repricing',
+        tooltipTemplate: "{scenarioLabel} shifts expectations for the Fed's future rate path.",
+        longTemplate:
+            'Markets react to the surprise by repricing the expected path of short-term rates. Forward rates, swap curves, and Treasury yields adjust to reflect the new expected trajectory.',
+    },
+    {
+        id: 'long_end_growth_inflation_mix',
+        name: 'Long-end yield mix (growth vs inflation)',
+        tooltipTemplate: '{scenarioLabel} changes growth and inflation expectations, moving {targetLabel}.',
+        longTemplate:
+            'The 10Y yield reflects both inflation expectations and growth/risk premium. Hawkish surprises can pull it in different directions depending on which force dominates.',
+    },
+    {
+        id: 'discount_rate_duration_assets',
+        name: 'Discount-rate effect (duration assets)',
+        tooltipTemplate: 'By changing rate expectations, {scenarioLabel} tends to move {targetLabel}.',
+        longTemplate:
+            'Higher discount rates typically pressure long-duration equities and growth stocks, whose future cash flows are worth less in present-value terms.',
+    },
+    {
+        id: 'risk_sentiment_volatility',
+        name: 'Risk sentiment and volatility',
+        tooltipTemplate: '{scenarioLabel} shifts risk appetite, often moving {targetLabel}.',
+        longTemplate:
+            'Risk-off shocks tend to lift volatility and pressure equities. Risk-on shocks compress vol and support risk assets.',
+    },
+    {
+        id: 'pass_through_to_borrowing_rates',
+        name: 'Pass-through to borrowing costs',
+        tooltipTemplate: 'Changes in yields and spreads from {scenarioLabel} often pass through to {targetLabel}.',
+        longTemplate:
+            'Borrowing rates reflect a benchmark yield plus a spread; when either moves, consumer and corporate borrowing costs follow with a short lag.',
+    },
+    {
+        id: 'financial_conditions_transmission',
+        name: 'Financial conditions transmission',
+        tooltipTemplate: 'If {scenarioLabel} tightens financial conditions, {targetLabel} tends to respond.',
+        longTemplate:
+            'Higher borrowing costs and tighter credit availability typically slow real economic activity — housing, spending, and investment all pull back.',
+    },
+    {
+        id: 'credit_risk_repricing',
+        name: 'Credit risk repricing',
+        tooltipTemplate: '{scenarioLabel} reprices credit risk, often moving {targetLabel}.',
+        longTemplate:
+            'When stress rises, investors demand more compensation for credit risk. Spreads widen, making borrowing more expensive and reducing loan availability.',
+    },
+    {
+        id: 'labor_market_signal',
+        name: 'Labor market signal',
+        tooltipTemplate: '{scenarioLabel} signals labor-market heat/cooling, often moving {targetLabel}.',
+        longTemplate:
+            'Labor data can affect inflation pressure, consumption, and Fed expectations. Hot labor markets push wages and spending up; cooling markets do the reverse.',
+    },
+    {
+        id: 'demand_growth_signal',
+        name: 'Demand and growth signal',
+        tooltipTemplate: '{scenarioLabel} changes demand expectations, often moving {targetLabel}.',
+        longTemplate:
+            'Weaker demand tends to slow growth and reduce inflation pressure. Stronger demand tends to boost growth but can raise inflation concerns.',
+    },
+    {
+        id: 'flight_to_quality',
+        name: 'Flight to quality',
+        tooltipTemplate: 'In risk-off conditions triggered by {scenarioLabel}, safe-haven flows tend to move {targetLabel}.',
+        longTemplate:
+            'Stress often drives flows into Treasuries and away from risk assets. This can push yields down even as equities fall.',
+    },
+];
+
+// Helper: look up a mechanism by id
+function getMechanism(mechanismId) {
+    return MECHANISMS.find((m) => m.id === mechanismId) || null;
+}
+
+// Helper: render a mechanism tooltip with scenario/target labels
+function renderMechanismTooltip(mechanismId, scenarioLabel, targetLabel) {
+    const mech = getMechanism(mechanismId);
+    if (!mech) return '';
+    return mech.tooltipTemplate
+        .replace(/\{scenarioLabel\}/g, scenarioLabel)
+        .replace(/\{targetLabel\}/g, targetLabel);
+}
+
+// ===== LAYER 2: SCENARIO PRESETS =====
+// Static scenario templates. Direction and surprise size are user-configurable at runtime.
+// Static, versioned — changes require an app update.
+
+const SCENARIO_PRESETS = [
+    // ── Policy scenarios ─────────────────────────────────────
+    {
+        id: 'fed_hike_hawkish_surprise',
+        title: 'Fed Hawkish Surprise',
+        descriptionShort: 'Fed hikes fed funds target (hawkish surprise)',
+        plainEnglishSummary: 'Expect upward pressure on short-term yields, a stronger dollar, and modest equity headwinds as markets reprice tighter policy.',
+        shockType: 'policy',
+        defaultShockDirection: 'hawkish',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'fed-funds-target',
+        appliesToRegimes: ['soft_landing', 'late_cycle'],
+    },
+    {
+        id: 'fed_higher_for_longer',
+        title: 'Fed Signals Higher-for-Longer',
+        descriptionShort: 'Fed signals rates will stay elevated longer than expected',
+        plainEnglishSummary: 'Expect upward pressure on yields and modest equity headwinds over the next few days to weeks as markets digest a longer restrictive stance.',
+        shockType: 'policy',
+        defaultShockDirection: 'hawkish',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'forward-guidance',
+        appliesToRegimes: null,
+    },
+    {
+        id: 'fed_cut_dovish_surprise',
+        title: 'Fed Dovish Surprise',
+        descriptionShort: 'Fed cuts rates (dovish surprise)',
+        plainEnglishSummary: 'Expect falling yields, a weaker dollar, and a boost to equities and risk appetite as easier financial conditions flow through.',
+        shockType: 'policy',
+        defaultShockDirection: 'dovish',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'fed-funds-target',
+        appliesToRegimes: ['soft_landing', 'recession_risk'],
+    },
+
+    // ── Inflation scenarios ──────────────────────────────────
+    {
+        id: 'core_pce_hotter_than_expected',
+        title: 'Core PCE Hotter Than Expected',
+        descriptionShort: 'Core PCE comes in above consensus',
+        plainEnglishSummary: 'Sticky inflation raises the odds of delayed rate cuts. Yields may rise, equities may pull back on hawkish repricing.',
+        shockType: 'inflation',
+        defaultShockDirection: 'inflationary',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'core-pce',
+        appliesToRegimes: null,
+    },
+    {
+        id: 'core_pce_cooler_than_expected',
+        title: 'Core PCE Cooler Than Expected',
+        descriptionShort: 'Core PCE comes in below consensus',
+        plainEnglishSummary: 'Cooling inflation supports rate-cut expectations. Yields likely drift lower and equities may rally on easing optimism.',
+        shockType: 'inflation',
+        defaultShockDirection: 'disinflationary',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'core-pce',
+        appliesToRegimes: null,
+    },
+
+    // ── Labor scenarios ──────────────────────────────────────
+    {
+        id: 'payrolls_wages_hot',
+        title: 'Payrolls + Wages Stronger Than Expected',
+        descriptionShort: 'Jobs and wage data surprise to the upside',
+        plainEnglishSummary: 'Strong labor data keeps the Fed cautious. Wage-driven inflation pressure may delay easing and push yields higher.',
+        shockType: 'labor',
+        defaultShockDirection: 'inflationary',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'wage-growth',
+        appliesToRegimes: null,
+    },
+    {
+        id: 'unemployment_higher_than_expected',
+        title: 'Unemployment Rises More Than Expected',
+        descriptionShort: 'Unemployment rate climbs above consensus',
+        plainEnglishSummary: 'A softening labor market raises recession concerns. Expect falling yields but also pressure on consumer spending and corporate earnings.',
+        shockType: 'labor',
+        defaultShockDirection: 'growth_down',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'unemployment',
+        appliesToRegimes: null,
+    },
+
+    // ── Growth scenarios ─────────────────────────────────────
+    {
+        id: 'consumer_spending_weaker',
+        title: 'Consumer Spending / Retail Sales Weaker',
+        descriptionShort: 'Consumer spending or retail sales miss expectations',
+        plainEnglishSummary: 'Weak consumer data signals slowing demand. Growth concerns may weigh on equities while boosting rate-cut expectations.',
+        shockType: 'growth',
+        defaultShockDirection: 'growth_down',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'consumer-spending',
+        appliesToRegimes: null,
+    },
+
+    // ── Credit / financial stress ────────────────────────────
+    {
+        id: 'credit_spreads_widen_sharply',
+        title: 'Credit Spreads Widen Sharply',
+        descriptionShort: 'Credit spreads blow out, signaling financial stress',
+        plainEnglishSummary: 'Rising credit stress tightens financial conditions and signals risk-off. Corporate borrowing costs jump, equities sell off, and safe havens rally.',
+        shockType: 'credit',
+        defaultShockDirection: 'risk_off',
+        defaultSurpriseSize: 2,
+        primaryShockNode: 'corporate-borrowing',
+        appliesToRegimes: ['late_cycle', 'financial_stress'],
+    },
+];
+
+// Helper: look up a scenario preset by id
+function getScenarioPreset(scenarioId) {
+    return SCENARIO_PRESETS.find((s) => s.id === scenarioId) || null;
+}
+
+// Shock type display labels
+const SHOCK_TYPE_LABELS = {
+    policy: '🏛️ Policy',
+    inflation: '💲 Inflation',
+    labor: '👷 Labor',
+    growth: '📈 Growth',
+    credit: '💳 Credit',
+};
+
+// Direction → accent color + background tint mapping for the scenario banner
+// Negative-pressure directions get red accent + dark red tint
+// Positive/easing directions get green accent + dark green tint
+const DIRECTION_COLORS = {
+    hawkish: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    inflationary: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    growth_down: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    risk_off: { accent: '#E5383B', bgTint: '#1A0F0F' },
+    dovish: { accent: '#1DB954', bgTint: '#0A150F' },
+    disinflationary: { accent: '#1DB954', bgTint: '#0A150F' },
+    growth_up: { accent: '#1DB954', bgTint: '#0A150F' },
+};
+
 // ===== LAYER 3: IMPACT RULES =====
 // Scenario-to-indicator adjacency list. Each rule defines how a scenario affects a target indicator.
 // Static, versioned, authoritative — the deterministic source of truth.
@@ -299,8 +540,8 @@ const IMPACT_RULES = [
         explanationTemplate: 'Hawkish surprise strengthens USD and signals growth slowdown, reducing oil demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            recession_risk: { strength: 3, sentiment: 'negative' },
-            financial_stress: { strength: 3, sentiment: 'negative' },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 3 },
         },
         surpriseScaling: null,
     },
@@ -326,9 +567,7 @@ const IMPACT_RULES = [
         mechanism: 'policy_path_repricing',
         explanationTemplate: 'Markets push out the expected timeline for rate cuts, lifting short-end yields.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3 },
-        },
+        regimeOverrides: null,
         surpriseScaling: { small: 0.7, medium: 1.0, large: 1.3 },
     },
     {
@@ -340,10 +579,7 @@ const IMPACT_RULES = [
         explanationTemplate: 'Higher-for-longer signals lift term premium, pushing 10Y yields up.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 2 },
-            late_cycle: { strength: 4 },
             recession_risk: { sign: 'mixed', strength: 2, confidence: 2 },
-            inflation_scare: { strength: 5, confidence: 5 },
             financial_stress: { sign: 'down', strength: 2 },
         },
         surpriseScaling: null,
@@ -357,10 +593,10 @@ const IMPACT_RULES = [
         explanationTemplate: 'Extended high rates pressure equity valuations through higher discount rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 1 },
+            soft_landing: { strength: 2 },
             late_cycle: { strength: 4 },
             recession_risk: { strength: 4 },
-            inflation_scare: { strength: 4 },
+            inflation_scare: { strength: 2 },
             financial_stress: { strength: 5 },
         },
         surpriseScaling: null,
@@ -374,10 +610,9 @@ const IMPACT_RULES = [
         explanationTemplate: 'Growth stocks suffer most from sustained high rates due to duration sensitivity.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 2 },
+            soft_landing: { strength: 3 },
             late_cycle: { strength: 5 },
-            recession_risk: { strength: 5 },
-            inflation_scare: { strength: 5 },
+            inflation_scare: { strength: 3 },
             financial_stress: { strength: 5 },
         },
         surpriseScaling: null,
@@ -390,12 +625,7 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Sustained high yields keep mortgage rates elevated.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 2 },
-            late_cycle: { strength: 4 },
-            financial_stress: { strength: 4 },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-housing',
@@ -406,10 +636,8 @@ const IMPACT_RULES = [
         explanationTemplate: 'Persistently high mortgage rates dampen housing demand and construction.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 4 },
+            soft_landing: { strength: 2 },
             recession_risk: { strength: 4 },
-            financial_stress: { strength: 4 },
         },
         surpriseScaling: null,
     },
@@ -422,10 +650,9 @@ const IMPACT_RULES = [
         explanationTemplate: 'Sustained tight financial conditions erode disposable income and credit access.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 3, lag: 'short' },
+            late_cycle: { strength: 3 },
             recession_risk: { strength: 3 },
-            financial_stress: { strength: 4, lag: 'short' },
+            financial_stress: { strength: 3 },
         },
         surpriseScaling: null,
     },
@@ -438,10 +665,9 @@ const IMPACT_RULES = [
         explanationTemplate: 'Persistently tight conditions drag on investment and consumption, slowing GDP.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
-            soft_landing: { strength: 1, confidence: 2 },
-            late_cycle: { strength: 3, lag: 'medium' },
-            recession_risk: { strength: 4, lag: 'medium' },
-            financial_stress: { strength: 4, lag: 'medium' },
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 3 },
         },
         surpriseScaling: null,
     },
@@ -453,13 +679,7 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Sustained high benchmark yields keep corporate borrowing costs elevated.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 2 },
-            late_cycle: { strength: 4 },
-            recession_risk: { strength: 4 },
-            financial_stress: { strength: 5, lag: 'immediate' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-unemployment',
@@ -469,13 +689,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Extended tight conditions slow hiring and gradually push unemployment higher.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 3, lag: 'medium' },
-            recession_risk: { strength: 3, lag: 'medium' },
-            financial_stress: { strength: 3, lag: 'medium' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-core-cpi',
@@ -485,12 +699,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Sustained restrictive policy cools demand and eases core inflation over time.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 4, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-core-ppi',
@@ -500,12 +709,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Extended demand slowdown reduces producer-side price pressure.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-headline-cpi',
@@ -515,12 +719,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Persistent restrictive stance gradually weighs on the broad price level.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-headline-ppi',
@@ -530,12 +729,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Sustained demand pressure reduction lowers wholesale prices over time.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-pce',
@@ -545,12 +739,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'PCE inflation eases as sustained tight policy cools consumer demand.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-core-pce',
@@ -560,12 +749,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'The Fed\'s preferred inflation gauge eases under persistent restrictive conditions.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 3, confidence: 4, lag: 'medium' },
-            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-            financial_stress: { sign: 'mixed', strength: 1, confidence: 2, sentiment: 'neutral' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-oil',
@@ -573,15 +757,9 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Oil falling might be a mild positive, cheaper energy = consumer relief.',
+        explanationTemplate: 'Extended tight policy signals sustained growth drag, reducing oil demand.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            inflation_scare: { sign: 'up', strength: 3, sentiment: 'negative' },
-            recession_risk: { sentiment: 'negative' },
-            financial_stress: { strength: 3, sentiment: 'negative' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-dow',
@@ -591,14 +769,7 @@ const IMPACT_RULES = [
         mechanism: 'discount_rate_duration_assets',
         explanationTemplate: 'Sustained high rates weigh on Dow valuations, though less than growth stocks.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 3 },
-            recession_risk: { strength: 3 },
-            inflation_scare: { strength: 3 },
-            financial_stress: { strength: 5 },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-vix',
@@ -608,14 +779,7 @@ const IMPACT_RULES = [
         mechanism: 'risk_sentiment_volatility',
         explanationTemplate: 'Higher-for-longer signals increase policy uncertainty, lifting volatility.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 4 },
-            recession_risk: { strength: 4 },
-            inflation_scare: { strength: 4 },
-            financial_stress: { strength: 5 },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-job-openings',
@@ -625,13 +789,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Sustained tight conditions cool hiring plans and reduce job postings.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 3, lag: 'short' },
-            recession_risk: { strength: 3 },
-            financial_stress: { strength: 3, lag: 'short' },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
     {
         id: 'hfl-to-wages',
@@ -641,13 +799,7 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Extended restrictive policy builds labor market slack, easing wage pressure.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: {
-            soft_landing: { strength: 1 },
-            late_cycle: { strength: 3 },
-            recession_risk: { strength: 3 },
-            financial_stress: { strength: 3 },
-        },
-        surpriseScaling: null,
+        regimeOverrides: null, surpriseScaling: null,
     },
 
     // ═══════════════════════════════════════════════════════════
@@ -2165,3 +2317,5 @@ const IMPACT_RULES = [
 function getRulesForScenario(scenarioId) {
     return IMPACT_RULES.filter((r) => r.scenarioId === scenarioId);
 }
+
+module.exports={IMPACT_RULES,SCENARIO_PRESETS};

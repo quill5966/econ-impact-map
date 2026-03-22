@@ -89,7 +89,7 @@ function renderTimelineView(container) {
             if (!ind) return;
 
             const arrow = imp.sign === 'up' ? '↑' : imp.sign === 'down' ? '↓' : '↕';
-            const sentiment = getSemanticSentiment(imp.targetIndicatorId, imp.sign);
+            const sentiment = getSemanticSentiment(imp.targetIndicatorId, imp.sign, imp.sentimentOverride);
             const dirClass = `dir-${sentiment}`;
             const themeLabel = TIMELINE_THEME_LABELS[ind.category] || ind.category;
             const bgClass = sentiment === 'positive'
