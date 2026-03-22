@@ -164,7 +164,10 @@ function renderGaugesView(container) {
     // Active scenario — compute scores and render
     const impacts = activeScenarioResult.impacts;
     const preset = getScenarioPreset(activeScenarioResult.context.scenarioId);
-    const summaryText = preset ? preset.plainEnglishSummary : '';
+    const regime = activeScenarioResult.context.regime;
+    const summaryText = preset
+        ? (preset.plainEnglishSummary && preset.plainEnglishSummary[regime]) || ''
+        : '';
 
     let gaugesHtml = GAUGE_THEMES.map(theme => {
         const score = aggregateThemeScore(impacts, theme.indicatorIds);

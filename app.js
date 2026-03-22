@@ -286,7 +286,8 @@ function renderBanner() {
         const ctx = activeScenarioResult.context;
         const dirColor = DIRECTION_COLORS[preset.defaultShockDirection] || { accent: '#6C63FF', bgTint: '#111320' };
         const regimeLabel = ctx.regime.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-        const summary = preset.plainEnglishSummary || preset.descriptionShort;
+        const summary = (preset.plainEnglishSummary && preset.plainEnglishSummary[ctx.regime])
+            || preset.descriptionShort;
 
         banner.className = 'scenario-banner active expandable';
         banner.style.setProperty('--banner-accent', dirColor.accent);
