@@ -700,7 +700,7 @@ const IMPACT_RULES = [
         regimeOverrides: {
             soft_landing: { strength: 4 },
             late_cycle: { strength: 4 },
-            recession_risk: { sign: 'mixed', strength: 1, confidence: 2 },
+            recession_risk: { strength: 4, confidence: 4 },
             inflation_scare: { sign: 'down', strength: 2, confidence: 2 },
             financial_stress: { strength: 4 },
         },
@@ -730,7 +730,10 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Lower yields pass through to mortgage rates, improving affordability.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            inflation_scare: { sign: 'up', strength: 2, confidence: 2 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'cut-to-housing',
@@ -755,7 +758,7 @@ const IMPACT_RULES = [
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
-            recession_risk: { sign: 'mixed', strength: 1, confidence: 2 },
+            recession_risk: { strength: 4, confidence: 4 },
             inflation_scare: { sign: 'up', strength: 2, confidence: 2 },
             financial_stress: { strength: 3 },
         },
@@ -802,7 +805,10 @@ const IMPACT_RULES = [
         mechanism: 'discount_rate_duration_assets',
         explanationTemplate: 'Lower rates support Dow valuations via reduced discount rates.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            inflation_scare: { sign: 'down', strength: 1, confidence: 2 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'cut-to-unemployment',
