@@ -946,7 +946,14 @@ const IMPACT_RULES = [
         mechanism: 'long_end_growth_inflation_mix',
         explanationTemplate: 'Hot inflation lifts 10Y via inflation expectations, but growth fears can offset.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 2, confidence: 4 },
+            late_cycle:       { strength: 2, confidence: 2 },
+            recession_risk:   { sign: 'down', strength: 2, confidence: 3 },
+            inflation_scare:  { strength: 4, confidence: 4 },
+            financial_stress: { sign: 'mixed', strength: 1, confidence: 2 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-sp500',
@@ -959,7 +966,7 @@ const IMPACT_RULES = [
         regimeOverrides: {
             soft_landing: { strength: 2 },
             late_cycle: { strength: 4 },
-            recession_risk: { strength: 4 },
+            recession_risk: { strength: 5 },
             inflation_scare: { strength: 4 },
             financial_stress: { strength: 4 },
         },
@@ -976,6 +983,7 @@ const IMPACT_RULES = [
         regimeOverrides: {
             soft_landing: { strength: 3 },
             late_cycle: { strength: 5 },
+            recession_risk: { strength: 5 },
             inflation_scare: { strength: 5 },
             financial_stress: { strength: 5 },
         },
@@ -1002,7 +1010,11 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Hot inflation pushes yields up, passing through to mortgage rates.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            recession_risk:   { strength: 1, confidence: 2 },
+            financial_stress: { strength: 3, confidence: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-housing',
@@ -1012,7 +1024,12 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Higher expected rates from hot inflation weigh on housing affordability.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle:       { strength: 3, confidence: 3 },
+            recession_risk:   { strength: 4, lag: 'short', confidence: 3 },
+            financial_stress: { strength: 4, lag: 'short', confidence: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-spending',
@@ -1022,7 +1039,14 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Higher expected rates from sticky inflation tighten conditions and reduce spending.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 1, confidence: 2 },
+            late_cycle:       { strength: 3, lag: 'short', confidence: 3 },
+            recession_risk:   { strength: 4, lag: 'short', confidence: 4 },
+            inflation_scare:  { strength: 3, confidence: 3 },
+            financial_stress: { strength: 4, lag: 'short', confidence: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-corporate',
@@ -1032,7 +1056,14 @@ const IMPACT_RULES = [
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Hot inflation raises rate expectations, pushing corporate borrowing costs higher.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 1, confidence: 3 },
+            late_cycle:       { strength: 3, confidence: 3 },
+            recession_risk:   { strength: 4, lag: 'immediate', confidence: 4 },
+            inflation_scare:  { strength: 3, confidence: 3 },
+            financial_stress: { strength: 5, lag: 'immediate', confidence: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-gdp',
@@ -1042,7 +1073,14 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Sticky inflation prolongs tight financial conditions, weighing on growth.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 1, confidence: 2 },
+            late_cycle:       { strength: 3, lag: 'medium', confidence: 3 },
+            recession_risk:   { strength: 4, lag: 'medium', confidence: 4 },
+            inflation_scare:  { strength: 3, confidence: 3 },
+            financial_stress: { strength: 4, lag: 'medium', confidence: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-unemployment',
@@ -1052,7 +1090,14 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Prolonged tight conditions from sticky inflation eventually raise unemployment.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 1, confidence: 1 },
+            late_cycle:       { strength: 2, lag: 'medium', confidence: 2 },
+            recession_risk:   { strength: 3, lag: 'medium', confidence: 3 },
+            inflation_scare:  { strength: 2, confidence: 2 },
+            financial_stress: { strength: 3, lag: 'medium', confidence: 2 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-job-openings',
@@ -1141,11 +1186,18 @@ const IMPACT_RULES = [
         id: 'hot-pce-to-oil',
         scenarioId: 'core_pce_hotter_than_expected',
         targetIndicatorId: 'oil-barrel-price',
-        sign: 'down', strength: 1, lag: 'short', confidence: 2,
+        sign: 'down', strength: 1, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Hot inflation implies tighter policy ahead, which reduces growth and oil demand.',
+        explanationTemplate: 'Hot inflation implies tighter policy ahead, which reduces growth and oil demand over time.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 1, confidence: 1, sentiment: 'neutral' },
+            late_cycle:       { strength: 2, confidence: 2 },
+            recession_risk:   { strength: 3, confidence: 3, sentiment: 'negative' },
+            inflation_scare:  { sign: 'mixed', strength: 1, confidence: 1, sentiment: 'neutral' },
+            financial_stress: { strength: 2, confidence: 2, sentiment: 'negative' },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'hot-pce-to-wages',
@@ -1155,7 +1207,14 @@ const IMPACT_RULES = [
         mechanism: 'labor_market_signal',
         explanationTemplate: 'Hot inflation raises wage demands as workers seek to keep up with prices.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing:     { strength: 3, confidence: 3 },
+            late_cycle:       { strength: 1, confidence: 2 },
+            recession_risk:   { sign: 'down', strength: 3, lag: 'short', confidence: 3 },
+            inflation_scare:  { strength: 3, confidence: 3 },
+            financial_stress: { sign: 'down', strength: 2, lag: 'short', confidence: 2 },
+        },
+        surpriseScaling: null,
     },
 
     // ═══════════════════════════════════════════════════════════

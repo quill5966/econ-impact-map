@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-21T19:20:32.341Z",
+  "lastUpdated": "2026-03-31T01:36:25.078Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
@@ -14,16 +14,16 @@
       "period": "Jan 28, 2026"
     },
     "front-end-yields-2y": {
-      "value": "3.79%",
-      "period": "Mar 19, 2026"
+      "value": "3.88%",
+      "period": "Mar 27, 2026"
     },
     "long-end-yields-10y": {
-      "value": "4.25%",
-      "period": "Mar 19, 2026"
+      "value": "4.44%",
+      "period": "Mar 27, 2026"
     },
     "mortgage-rates": {
-      "value": "6.22%",
-      "period": "Mar 19, 2026"
+      "value": "6.38%",
+      "period": "Mar 26, 2026"
     },
     "housing-starts": {
       "value": "1.49M SAAR",
@@ -34,8 +34,8 @@
       "period": "Jan 2026"
     },
     "corporate-borrowing": {
-      "value": "IG Spread 90bp",
-      "period": "Mar 19, 2026"
+      "value": "IG Spread 91bp",
+      "period": "Mar 27, 2026"
     },
     "gdp-growth": {
       "value": "+0.7%",
@@ -78,24 +78,24 @@
       "period": "Jan 2026"
     },
     "oil-barrel-price": {
-      "value": "$93.39",
-      "period": "Mar 16, 2026"
+      "value": "$89.33",
+      "period": "Mar 23, 2026"
     },
     "dow": {
-      "value": "45,577",
-      "period": "Mar 20, 2026"
+      "value": "45,216",
+      "period": "Mar 30, 2026"
     },
     "nasdaq": {
-      "value": "21,648",
-      "period": "Mar 20, 2026"
+      "value": "20,948",
+      "period": "Mar 27, 2026"
     },
     "sp-500": {
-      "value": "6,506",
-      "period": "Mar 20, 2026"
+      "value": "6,344",
+      "period": "Mar 30, 2026"
     },
     "vix": {
-      "value": "24.06",
-      "period": "Mar 19, 2026"
+      "value": "31.05",
+      "period": "Mar 27, 2026"
     }
   }
 }
