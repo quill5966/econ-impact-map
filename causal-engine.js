@@ -12,7 +12,8 @@
  * @returns {Object} { context, impacts: ComputedImpact[] }
  */
 function runScenario(context) {
-    const rules = getRulesForScenario(context.scenarioId);
+    const rules = getRulesForScenario(context.scenarioId)
+        .filter(rule => !rule.appliesToRegimes || rule.appliesToRegimes.includes(context.regime));
     const preset = getScenarioPreset(context.scenarioId);
 
     if (!preset || rules.length === 0) {
