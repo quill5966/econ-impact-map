@@ -1,25 +1,25 @@
 {
-  "lastUpdated": "2026-03-31T01:36:25.078Z",
+  "lastUpdated": "2026-04-01T21:16:17.665Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
-      "period": "Mar 2026"
+      "period": "Apr 2026"
     },
     "qe-qt-pace": {
-      "value": "QT Ended",
-      "period": "Jan 28, 2026"
+      "value": "Neutral / Pause",
+      "period": "Mar 18, 2026"
     },
     "forward-guidance": {
       "value": "Hold / Data-dep.",
-      "period": "Jan 28, 2026"
+      "period": "Mar 18, 2026"
     },
     "front-end-yields-2y": {
-      "value": "3.88%",
-      "period": "Mar 27, 2026"
+      "value": "3.79%",
+      "period": "Mar 31, 2026"
     },
     "long-end-yields-10y": {
-      "value": "4.44%",
-      "period": "Mar 27, 2026"
+      "value": "4.30%",
+      "period": "Mar 31, 2026"
     },
     "mortgage-rates": {
       "value": "6.38%",
@@ -34,8 +34,8 @@
       "period": "Jan 2026"
     },
     "corporate-borrowing": {
-      "value": "IG Spread 91bp",
-      "period": "Mar 27, 2026"
+      "value": "IG Spread 90bp",
+      "period": "Mar 31, 2026"
     },
     "gdp-growth": {
       "value": "+0.7%",
@@ -47,7 +47,7 @@
     },
     "job-openings": {
       "value": "6.9M",
-      "period": "Jan 2026"
+      "period": "Feb 2026"
     },
     "wage-growth": {
       "value": "+0.4% YoY",
@@ -78,24 +78,24 @@
       "period": "Jan 2026"
     },
     "oil-barrel-price": {
-      "value": "$89.33",
-      "period": "Mar 23, 2026"
+      "value": "$104.69",
+      "period": "Mar 30, 2026"
     },
     "dow": {
-      "value": "45,216",
-      "period": "Mar 30, 2026"
+      "value": "46,342",
+      "period": "Mar 31, 2026"
     },
     "nasdaq": {
-      "value": "20,948",
-      "period": "Mar 27, 2026"
+      "value": "21,591",
+      "period": "Mar 31, 2026"
     },
     "sp-500": {
-      "value": "6,344",
-      "period": "Mar 30, 2026"
+      "value": "6,529",
+      "period": "Mar 31, 2026"
     },
     "vix": {
-      "value": "31.05",
-      "period": "Mar 27, 2026"
+      "value": "25.25",
+      "period": "Mar 31, 2026"
     }
   }
 }

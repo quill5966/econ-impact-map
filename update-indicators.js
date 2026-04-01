@@ -40,7 +40,7 @@ const REQUEST_DELAY_MS = 200;
 // ── FOMC Config ─────────────────────────────────────────────────
 const FED_RSS_URL = 'https://www.federalreserve.gov/feeds/press_all.xml';
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_MODEL = 'claude-haiku-4-5-20241022';
+const ANTHROPIC_MODEL = 'claude-haiku-4-5-20251001';
 
 // FOMC statement must contain ALL of these (case-insensitive)
 const FOMC_STATEMENT_KEYWORDS = ['fomc', 'statement'];
@@ -174,9 +174,23 @@ async function fetchStatementText(url) {
     const html = await fetchText(url);
 
     // The statement text sits inside <div id="article"> ... </div>
-    // Extract the article div content
-    const articleMatch = html.match(/<div[^>]*id=["']article["'][^>]*>([\s\S]*?)<\/div>/i);
-    let text = articleMatch ? articleMatch[1] : html;
+    // The article div contains nested child divs, so we must grab everything
+    // between the opening #article tag and the page's next major section.
+    // Strategy: find the #article div, then grab all content until a clear
+    // structural boundary (e.g., <div class="footer">, <div id="footer">,
+    // or the last-updated section).
+    let text = '';
+    const articleStart = html.search(/<div[^>]*id=["']article["'][^>]*/i);
+    if (articleStart !== -1) {
+        // Find the end of the opening tag
+        const tagEnd = html.indexOf('>', articleStart);
+        const afterArticle = html.substring(tagEnd + 1);
+        // Grab content up to the footer / last-updated / end-of-content markers
+        const endMarker = afterArticle.search(/<div[^>]*class=["'][^"']*footer[^"']*["']/i);
+        text = endMarker !== -1 ? afterArticle.substring(0, endMarker) : afterArticle;
+    } else {
+        text = html;
+    }
 
     // Strip HTML tags
     text = text.replace(/<[^>]+>/g, ' ');
