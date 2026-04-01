@@ -2439,7 +2439,14 @@ const IMPACT_RULES = [
         mechanism: 'policy_path_repricing',
         explanationTemplate: 'Credit stress signals growth slowdown, pulling rate-cut expectations forward.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { strength: 2 },
+            late_cycle: { strength: 4 },
+            recession_risk: { strength: 4 },
+            inflation_scare: { sign: 'mixed', strength: 2, confidence: 2 },
+            financial_stress: { strength: 5 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-mortgage',
@@ -2449,7 +2456,13 @@ const IMPACT_RULES = [
         mechanism: 'credit_risk_repricing',
         explanationTemplate: 'Wider credit spreads pass through to higher mortgage rates despite falling Treasuries.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { strength: 2 },
+            late_cycle: { strength: 4 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 5 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-housing',
@@ -2459,7 +2472,13 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Higher mortgage rates and tighter lending standards reduce housing activity.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { strength: 2 },
+            late_cycle: { strength: 4 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 5 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-spending',
@@ -2469,7 +2488,13 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Tighter credit conditions reduce consumer access to credit and spending.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { strength: 2 },
+            late_cycle: { strength: 4 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 5 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-unemployment',
@@ -2479,7 +2504,12 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Tighter credit slows growth and hiring, eventually lifting unemployment.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3, lag: 'medium' },
+            recession_risk: { strength: 3, lag: 'medium' },
+            financial_stress: { strength: 4, lag: 'medium' },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-wages',
@@ -2489,7 +2519,12 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Financial stress slows hiring and reduces wage bargaining power.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-oil',
@@ -2499,7 +2534,12 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Credit stress signals growth weakness, reducing oil demand.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3, sentiment: 'negative' },
+            recession_risk: { strength: 3, sentiment: 'negative' },
+            financial_stress: { strength: 4, sentiment: 'negative' },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-core-cpi',
@@ -2509,7 +2549,11 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Tighter credit slows demand and gradually eases core inflation.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'credit-to-job-openings',
@@ -2519,7 +2563,12 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'Financial stress leads firms to freeze or reduce hiring plans.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
 ];
 
