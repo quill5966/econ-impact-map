@@ -13,7 +13,7 @@ The core causal logic is **static, curated, and version-controlled**. An LLM (Ph
 | Sign, strength, lag, confidence | Polished tooltip wording |
 | Mechanisms, conditions, regime overrides | Beginner vs advanced phrasing |
 | Surprise scaling, exceptions | "Tell me the chain reaction" walkthrough |
-| Explanation templates | Cross-indicator comparisons, analogies |
+| Tooltip text (regime-aware fallback) | Cross-indicator comparisons, analogies |
 
 ---
 
@@ -121,7 +121,6 @@ Each indicator belongs to a category that maps to a visual theme node:
 | `lag` | `immediate` / `short` / `medium` / `long` | Time to propagate |
 | `confidence` | 1–5 | How certain the effect is |
 | `mechanism` | MechanismId | References the mechanism registry |
-| `explanationTemplate` | string | Static fallback explanation |
 | `regimeOverrides` | object or null | Partial overrides per regime (sign, strength, etc.) |
 | `surpriseScaling` | `{ small, medium, large }` | Per-rule multipliers for surprise size |
 | `conditionalOn` | ConditionClause[] or null | Structured conditions |
@@ -173,7 +172,7 @@ ComputedImpact[] — sorted by lag, then strength descending
   • targetIndicatorId
   • sign, strength, lag, confidence
   • mechanism
-  • explanationShort (from static template)
+  • explanationShort (regime-aware, from tooltip-text.js)
   • explanationSource ('static_template' | 'llm')
   • reasonsApplied[] — full audit trail
 ```
@@ -210,7 +209,8 @@ econ-impact-map/
 ├── indicators.js        # L1: 24 indicator definitions + observations
 ├── scenarios.js         # L2: 9 scenario presets
 ├── mechanisms.js        # L3: 11 reusable mechanism definitions
-├── impact-rules.js      # L3: 60+ scenario-to-indicator rules
+├── impact-rules.js      # L3: 177 scenario-to-indicator rules
+├── tooltip-text.js      # Regime-aware tooltip text (keyed by rule ID)
 ├── causal-engine.js     # L4: Deterministic engine
 ├── app.js               # Layout, rendering, scenario panel, interactions
 ├── ARCHITECTURE.md      # This file

@@ -8,13 +8,14 @@ const fs = require('fs');
 const mechCode = fs.readFileSync('./mechanisms.js', 'utf8');
 const scenCode = fs.readFileSync('./scenarios.js', 'utf8');
 const rulesCode = fs.readFileSync('./impact-rules.js', 'utf8');
+const tooltipCode = fs.readFileSync('./tooltip-text.js', 'utf8');
 
 // Use Function constructor to execute in a shared scope
-const combined = mechCode + '\n' + scenCode + '\n' + rulesCode +
-    '\nmodule.exports = { IMPACT_RULES, SCENARIO_PRESETS, MECHANISMS };';
+const combined = mechCode + '\n' + scenCode + '\n' + rulesCode + '\n' + tooltipCode +
+    '\nmodule.exports = { IMPACT_RULES, SCENARIO_PRESETS, MECHANISMS, TOOLTIP_TEXT };';
 const tmpFile = require('path').join(__dirname, '_verify_tmp.js');
 fs.writeFileSync(tmpFile, combined);
-const { IMPACT_RULES, SCENARIO_PRESETS, MECHANISMS } = require(tmpFile);
+const { IMPACT_RULES, SCENARIO_PRESETS, MECHANISMS, TOOLTIP_TEXT } = require(tmpFile);
 fs.unlinkSync(tmpFile);
 
 const VALID_REGIMES = ['soft_landing', 'late_cycle', 'recession_risk', 'inflation_scare', 'financial_stress'];
@@ -101,6 +102,34 @@ console.log('─'.repeat(50));
 console.log(`Total rules: ${totalRules}`);
 console.log(`Rules with regime overrides: ${totalOverrides}`);
 console.log(`Total regime override entries: ${totalOverrideEntries}`);
+// 6. Tooltip coverage
+console.log('\n📝 TOOLTIP COVERAGE:');
+console.log('─'.repeat(50));
+let tooltipMissing = 0;
+let tooltipTotal = 0;
+for (const rule of IMPACT_RULES) {
+    tooltipTotal++;
+    const entry = TOOLTIP_TEXT[rule.id];
+    if (!entry || !entry._default) {
+        console.error(`❌ Rule ${rule.id}: missing tooltip text (no _default in TOOLTIP_TEXT)`);
+        tooltipMissing++;
+        errors++;
+    }
+}
+console.log(`${tooltipMissing === 0 ? '✅' : '❌'} ${tooltipTotal} rules checked, ${tooltipMissing} missing tooltip text`);
+
+// Check for orphaned tooltip entries (tooltip keys with no matching rule)
+const ruleIds = new Set(IMPACT_RULES.map(r => r.id));
+let orphaned = 0;
+for (const tooltipId of Object.keys(TOOLTIP_TEXT)) {
+    if (!ruleIds.has(tooltipId)) {
+        console.error(`⚠️  Orphaned tooltip entry: "${tooltipId}" has no matching rule ID`);
+        orphaned++;
+    }
+}
+if (orphaned > 0) console.log(`⚠️  ${orphaned} orphaned tooltip entries found`);
+else console.log('✅ No orphaned tooltip entries');
+
 console.log(`\n${errors === 0 ? '✅ All checks passed!' : `❌ ${errors} error(s) found`}`);
 
 process.exit(errors > 0 ? 1 : 0);

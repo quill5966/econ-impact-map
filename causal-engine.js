@@ -60,8 +60,9 @@ function runScenario(context) {
             reasons.push('persistence boost: trend_confirming (×1.15)');
         }
 
-        // 6. Resolve explanation
-        const explanationShort = rule.explanationTemplate || '(no template)';
+        // 6. Resolve explanation (regime-aware from tooltip-text.js)
+        const tooltipEntry = TOOLTIP_TEXT[rule.id];
+        const explanationShort = tooltipEntry?.[context.regime] || tooltipEntry?._default || '(no description)';
 
         return {
             targetIndicatorId: rule.targetIndicatorId,

@@ -1,25 +1,24 @@
 // ===== LAYER 3: IMPACT RULES =====
 // Scenario-to-indicator adjacency list. Each rule defines how a scenario affects a target indicator.
-// Static, versioned, authoritative — the deterministic source of truth.
+// Static, versioned, authoritative â€” the deterministic source of truth.
 //
 // sign:       'up' | 'down' | 'mixed'
-// strength:   1–5 integer scale
+// strength:   1â€“5 integer scale
 // lag:        'immediate' | 'short' | 'medium' | 'long'
-// confidence: 1–5 integer scale
+// confidence: 1â€“5 integer scale
 // mechanism:  references MECHANISMS[].id (from mechanisms.js)
 
 const IMPACT_RULES = [
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: fed_hike_hawkish_surprise
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'hike-to-fed-funds',
         scenarioId: 'fed_hike_hawkish_surprise',
         targetIndicatorId: 'fed-funds-target',
         sign: 'up', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'direct_policy_action',
-        explanationTemplate: 'The Fed directly sets the fed funds rate — a hike raises it mechanically.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: { small: 0.6, medium: 1.0, large: 1.4 },
@@ -30,7 +29,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 5,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'A hawkish surprise reprices the expected fed funds path upward, lifting 2Y yields.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: { small: 0.7, medium: 1.0, large: 1.3 },
@@ -41,7 +39,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Hawkish surprise pushes 10Y up via term premium, but growing recession fears push it down (curve flattening).',
         conditionalOn: null, exceptions: ['At zero lower bound, effect is muted'],
         regimeOverrides: {
             late_cycle: { sign: 'mixed', strength: 2, confidence: 3 },
@@ -56,7 +53,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'up', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Higher yields pass through to mortgage rates with a short lag.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -67,7 +63,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Higher rates raise discount rates, pressuring equity valuations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -84,7 +79,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Growth/tech stocks are especially rate-sensitive due to long-duration cash flows.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -100,7 +94,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Dow falls but less than Nasdaq — its value-heavy composition is less rate-sensitive.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -115,7 +108,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Hawkish surprises increase uncertainty, lifting volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -131,7 +123,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Higher benchmark yields widen credit spreads and raise corporate borrowing costs.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 4 },
@@ -146,7 +137,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 3, lag: 'medium', confidence: 4,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Higher mortgage rates make housing less affordable, reducing new construction.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -160,7 +150,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter financial conditions reduce disposable income and credit access.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -175,7 +164,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter conditions slow investment and consumption, dragging on GDP over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -190,7 +178,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter conditions slow demand and reduce pricing power, easing core inflation over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -201,7 +188,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-ppi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Demand slowdown reduces producer-side price pressure with a long lag.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -212,7 +198,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Broad price level eases as tighter financial conditions cool demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -223,7 +208,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-ppi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Reduced demand pressure lowers wholesale prices over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -234,7 +218,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'pce',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'PCE inflation eases as tighter policy cools consumer demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -245,7 +228,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-pce',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'The Fed\'s preferred inflation gauge eases as tightening suppresses demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -256,7 +238,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter conditions slow growth and hiring, pushing unemployment higher over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -271,7 +252,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Firms pull back on job postings as financial conditions tighten and demand slows.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -285,7 +265,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Labor market slack from tighter policy reduces wage pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
@@ -296,7 +275,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Hawkish surprise strengthens USD and signals growth slowdown, reducing oil demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 3, sentiment: 'negative' },
@@ -305,16 +283,15 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: fed_higher_for_longer
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'hfl-to-forward-guidance',
         scenarioId: 'fed_higher_for_longer',
         targetIndicatorId: 'forward-guidance',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 5,
         mechanism: 'direct_policy_action',
-        explanationTemplate: 'The Fed explicitly signals rates will remain elevated for longer.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -324,7 +301,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 5,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Markets push out the expected timeline for rate cuts, lifting short-end yields.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -337,7 +313,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Higher-for-longer signals lift term premium, pushing 10Y yields up.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -354,7 +329,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Extended high rates pressure equity valuations through higher discount rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -371,7 +345,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Growth stocks suffer most from sustained high rates due to duration sensitivity.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -388,7 +361,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'up', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Sustained high yields keep mortgage rates elevated.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -403,7 +375,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 3, lag: 'medium', confidence: 4,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Persistently high mortgage rates dampen housing demand and construction.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -419,7 +390,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Sustained tight financial conditions erode disposable income and credit access.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -435,7 +405,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Persistently tight conditions drag on investment and consumption, slowing GDP.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1, confidence: 2 },
@@ -451,7 +420,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Sustained high benchmark yields keep corporate borrowing costs elevated.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -467,7 +435,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Extended tight conditions slow hiring and gradually push unemployment higher.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -483,7 +450,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Sustained restrictive policy cools demand and eases core inflation over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 4, lag: 'medium' },
@@ -498,7 +464,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-ppi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Extended demand slowdown reduces producer-side price pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
@@ -513,7 +478,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Persistent restrictive stance gradually weighs on the broad price level.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
@@ -528,7 +492,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-ppi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Sustained demand pressure reduction lowers wholesale prices over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
@@ -543,7 +506,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'pce',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'PCE inflation eases as sustained tight policy cools consumer demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 3, lag: 'medium' },
@@ -558,7 +520,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-pce',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'The Fed\'s preferred inflation gauge eases under persistent restrictive conditions.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3, confidence: 4, lag: 'medium' },
@@ -573,7 +534,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Oil falling might be a mild positive, cheaper energy = consumer relief.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -589,7 +549,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Sustained high rates weigh on Dow valuations, though less than growth stocks.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -606,7 +565,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Higher-for-longer signals increase policy uncertainty, lifting volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -623,7 +581,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Sustained tight conditions cool hiring plans and reduce job postings.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -639,7 +596,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Extended restrictive policy builds labor market slack, easing wage pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 1 },
@@ -650,16 +606,15 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: fed_cut_dovish_surprise
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'cut-to-fed-funds',
         scenarioId: 'fed_cut_dovish_surprise',
         targetIndicatorId: 'fed-funds-target',
         sign: 'down', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'direct_policy_action',
-        explanationTemplate: 'The Fed directly lowers the fed funds rate.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: { small: 0.6, medium: 1.0, large: 1.4 },
@@ -670,7 +625,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 5,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'A dovish surprise reprices the fed funds path lower, pulling 2Y yields down.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: { small: 0.7, medium: 1.0, large: 1.3 },
@@ -681,7 +635,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Dovish surprise lowers 10Y yields, though growth optimism can partially offset.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 4 },
@@ -695,7 +648,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Lower rates reduce discount rates, boosting equity valuations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 4 },
@@ -712,7 +664,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Growth stocks benefit most from lower rates due to duration sensitivity.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 5 },
@@ -728,7 +679,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'down', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Lower yields pass through to mortgage rates, improving affordability.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { sign: 'up', strength: 2, confidence: 2 },
@@ -741,7 +691,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'up', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Lower mortgage rates stimulate housing demand and new construction.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 1, confidence: 2 },
@@ -754,7 +703,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Dovish surprises reduce uncertainty, compressing volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -770,7 +718,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'up', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier financial conditions boost disposable income and credit access.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 1, confidence: 2 },
@@ -783,7 +730,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier conditions stimulate investment and consumption, supporting GDP.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -793,7 +739,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'down', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Lower benchmark yields reduce corporate borrowing costs.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -803,7 +748,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Lower rates support Dow valuations via reduced discount rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { sign: 'down', strength: 1, confidence: 2 },
@@ -816,7 +760,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'down', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier conditions support hiring and gradually lower unemployment.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -826,7 +769,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier conditions eventually support demand and push core inflation higher.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -836,7 +778,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-ppi',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Demand recovery from easier conditions adds producer-side price pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -846,7 +787,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-cpi',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier monetary conditions gradually push the broad price level higher.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -856,7 +796,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-ppi',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Demand recovery from easier conditions lifts wholesale prices over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -866,7 +805,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'pce',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'PCE inflation rises as easier policy lifts consumer demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -876,7 +814,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-pce',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'The Fed\'s preferred inflation gauge drifts higher as easing supports demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -886,7 +823,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'up', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Dovish surprise weakens USD and signals growth support, lifting oil demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -896,7 +832,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier conditions tighten the labor market over time, lifting wage pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -906,21 +841,19 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'up', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easier financial conditions encourage firms to expand hiring and post openings.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: core_pce_hotter_than_expected
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'hot-pce-to-core-pce',
         scenarioId: 'core_pce_hotter_than_expected',
         targetIndicatorId: 'core-pce',
         sign: 'up', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'direct_policy_action',
-        explanationTemplate: 'Core PCE prints higher than expected — this is the direct data release.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -930,7 +863,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Hotter inflation pushes markets to price in fewer rate cuts or more hikes.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -944,7 +876,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Hot inflation lifts 10Y via inflation expectations, but growth fears can offset.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 4 },
@@ -961,7 +892,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Hot inflation means tighter policy ahead, pressuring equities.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -978,7 +908,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Growth stocks are hit hardest by hawkish repricing after hot inflation.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -995,7 +924,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'up', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Persistent inflation pressure tends to show up in both PCE and CPI measures.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { strength: 4 },
@@ -1008,7 +936,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'up', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Hot inflation pushes yields up, passing through to mortgage rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk:   { strength: 1, confidence: 2 },
@@ -1022,7 +949,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Higher expected rates from hot inflation weigh on housing affordability.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 3, confidence: 3 },
@@ -1037,7 +963,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Higher expected rates from sticky inflation tighten conditions and reduce spending.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 2 },
@@ -1054,7 +979,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Hot inflation raises rate expectations, pushing corporate borrowing costs higher.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 3 },
@@ -1071,7 +995,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Sticky inflation prolongs tight financial conditions, weighing on growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 2 },
@@ -1088,7 +1011,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 1, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Prolonged tight conditions from sticky inflation eventually raise unemployment.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 1 },
@@ -1105,7 +1027,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 1, lag: 'medium', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter expected policy from hot inflation gradually reduces hiring plans.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1115,7 +1036,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-ppi',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Broad inflation pressure shows up in producer prices as well.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1125,7 +1045,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-cpi',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Persistent core inflation pulls headline CPI higher.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1135,7 +1054,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-ppi',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Core PCE heat signals broad inflation pressure across producer prices.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1145,7 +1063,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'pce',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Hot core PCE directly lifts headline PCE.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1155,7 +1072,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Hot inflation signals tighter policy, weighing on Dow valuations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -1171,7 +1087,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Hot inflation raises policy uncertainty and lifts volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -1188,7 +1103,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 1, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Hot inflation implies tighter policy ahead, which reduces growth and oil demand over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 1, sentiment: 'neutral' },
@@ -1205,7 +1119,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'up', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Hot inflation raises wage demands as workers seek to keep up with prices.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 3, confidence: 3 },
@@ -1217,16 +1130,15 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: core_pce_cooler_than_expected
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'cool-pce-to-core-pce',
         scenarioId: 'core_pce_cooler_than_expected',
         targetIndicatorId: 'core-pce',
         sign: 'down', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'direct_policy_action',
-        explanationTemplate: 'Core PCE prints lower than expected — this is the direct data release.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1236,7 +1148,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Cooler inflation data brings forward rate-cut expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 3 },
@@ -1253,7 +1164,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Disinflation supports equities via lower expected discount rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 3, confidence: 4 },
@@ -1270,7 +1180,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Growth stocks rally on dovish repricing after cool inflation.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 3, confidence: 4 },
@@ -1287,7 +1196,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'long_end_growth_inflation_mix',
-        explanationTemplate: 'Cooler inflation lowers 10Y via reduced inflation expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1304,7 +1212,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'down', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Cooler inflation pulls yields down, easing mortgage rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk:   { strength: 1, confidence: 2 },
@@ -1319,7 +1226,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'up', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Lower expected rates from cool inflation improve housing affordability.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1336,7 +1242,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'up', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easing inflation expectations loosen conditions and support spending.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1353,7 +1258,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'down', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Cool inflation lowers rate expectations, easing corporate borrowing costs.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1370,7 +1274,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Cooling inflation may ease conditions, supporting growth over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1387,7 +1290,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'down', strength: 1, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easing conditions from falling inflation support hiring over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1404,7 +1306,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'up', strength: 1, lag: 'medium', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Easing rate expectations from cool inflation encourage hiring.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1421,7 +1322,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cooling PCE signals broad disinflation that appears in CPI too.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1431,7 +1331,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-ppi',
         sign: 'down', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Broad disinflation eases producer-side price pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1441,7 +1340,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-cpi',
         sign: 'down', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cooling core inflation pulls headline CPI lower.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1451,7 +1349,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'headline-ppi',
         sign: 'down', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cooling PCE signals narrowing price pressure across wholesale prices.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1461,7 +1358,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'pce',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cool core PCE directly pulls headline PCE lower.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1471,7 +1367,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'discount_rate_duration_assets',
-        explanationTemplate: 'Cool inflation supports Dow via lower expected discount rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1488,7 +1383,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Cool inflation reduces policy uncertainty, compressing volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1505,7 +1399,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'mixed', strength: 1, lag: 'medium', confidence: 1,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cool PCE has an ambiguous effect on oil — easing expectations support demand, but disinflation may signal weaker growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 1, sentiment: 'neutral' },
@@ -1522,7 +1415,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Falling inflation reduces wage demands as cost-of-living pressure eases.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3, sentiment: 'positive' },
@@ -1534,16 +1426,15 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: payrolls_wages_hot
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'hot-labor-to-wages',
         scenarioId: 'payrolls_wages_hot',
         targetIndicatorId: 'wage-growth',
         sign: 'up', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Strong payrolls and wage data directly show labor market heat.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1553,7 +1444,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Strong hiring typically pushes unemployment lower.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk:   { strength: 2, confidence: 2 },
@@ -1567,7 +1457,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'up', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Hot labor data signals the Fed may need to keep rates higher, lifting 2Y yields.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 4 },
@@ -1584,7 +1473,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'up', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Strong wage growth can feed into services inflation over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { strength: 4, confidence: 4 },
@@ -1597,7 +1485,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'More jobs and higher wages boost consumer spending power.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 3, confidence: 3 },
@@ -1614,7 +1501,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Strong labor data signals economic resilience, supporting equities modestly.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 2 },
@@ -1631,7 +1517,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Strong labor data supports growth stocks via positive growth outlook.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 2 },
@@ -1648,7 +1533,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Strong employment data supports Dow via economic resilience.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 1, confidence: 2 },
@@ -1665,7 +1549,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Strong labor data reduces recession concerns, compressing volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1682,7 +1565,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Hot labor data lifts 10Y via growth/inflation expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1699,7 +1581,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'up', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Higher yields from strong labor data pass through to mortgage rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 3, confidence: 3 },
@@ -1714,7 +1595,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Higher mortgage rates from labor heat may dampen housing demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 3, confidence: 3 },
@@ -1730,7 +1610,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'up', strength: 2, lag: 'long', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Strong employment supports consumption and eventually GDP growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 3 },
@@ -1747,7 +1626,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'up', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Strong labor data signals robust demand, supporting oil prices.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing:     { strength: 2, confidence: 2 },
@@ -1764,7 +1642,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-pce',
         sign: 'up', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Strong wages feed into services prices, lifting core PCE over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1774,7 +1651,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Hot labor market confirms strong demand for workers and elevated openings.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk:   { strength: 2, confidence: 2 },
@@ -1783,7 +1659,7 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ── Multi-timeline reversal rules (equities + VIX) ──────────
+    // â”€â”€ Multi-timeline reversal rules (equities + VIX) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     {
         id: 'hot-labor-to-sp500-reversal',
         scenarioId: 'payrolls_wages_hot',
@@ -1791,7 +1667,6 @@ const IMPACT_RULES = [
         appliesToRegimes: ['recession_risk', 'late_cycle', 'financial_stress'],
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Initial relief rally fades as labor data proves lagged — downward revisions and deteriorating fundamentals reassert.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 2, confidence: 2 },
@@ -1807,7 +1682,6 @@ const IMPACT_RULES = [
         appliesToRegimes: ['recession_risk', 'late_cycle', 'financial_stress'],
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Initial relief fades — growth stocks reprice lower as lagged labor data is revised and fundamentals deteriorate.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 3, confidence: 2 },
@@ -1823,7 +1697,6 @@ const IMPACT_RULES = [
         appliesToRegimes: ['recession_risk', 'late_cycle', 'financial_stress'],
         sign: 'down', strength: 2, lag: 'medium', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Initial support fades — Dow gives back gains as lagged labor data is revised downward.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle:       { strength: 2, confidence: 2 },
@@ -1839,22 +1712,20 @@ const IMPACT_RULES = [
         appliesToRegimes: ['recession_risk'],
         sign: 'up', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Initial VIX compression reverses as markets realize labor data is lagged — recession fears reassert and volatility climbs.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null,
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: unemployment_higher_than_expected
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'high-ue-to-unemployment',
         scenarioId: 'unemployment_higher_than_expected',
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Unemployment rate rises directly from the data release.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1864,7 +1735,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Rising unemployment brings forward rate-cut expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -1881,7 +1751,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'flight_to_quality',
-        explanationTemplate: 'Weakening labor market triggers flight-to-quality into Treasuries.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -1897,7 +1766,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 3, lag: 'short', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Rising unemployment reduces income and consumer confidence.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -1913,7 +1781,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Cooling labor market drags on consumption and GDP growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -1929,7 +1796,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Slack in the labor market reduces wage pressure.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -1939,7 +1805,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Rising unemployment raises recession fears, pressuring equities.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -1954,7 +1819,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Labor weakness weighs on growth stock sentiment.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -1969,7 +1833,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Rising unemployment signals economic weakness, pressuring Dow.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -1984,7 +1847,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Rising unemployment increases economic uncertainty, lifting volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -1999,7 +1861,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'down', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Falling yields from labor weakness pass through to lower mortgage rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -2009,7 +1870,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'The demand hit from rising unemployment outweighs lower mortgage rate benefits.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { sign: 'mixed', strength: 1, confidence: 2 },
@@ -2025,7 +1885,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 2, lag: 'short', confidence: 3,
         mechanism: 'credit_risk_repricing',
-        explanationTemplate: 'Rising unemployment raises credit risk, widening corporate spreads.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2040,7 +1899,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Labor weakness signals softening demand, pressuring oil prices.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3, sentiment: 'negative' },
@@ -2055,7 +1913,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Rising unemployment builds slack, gradually easing core inflation.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -2065,21 +1922,19 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'labor_market_signal',
-        explanationTemplate: 'Weakening labor demand is confirmed by falling job openings.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: consumer_spending_weaker
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'weak-spend-to-spending',
         scenarioId: 'consumer_spending_weaker',
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Consumer spending or retail sales print below expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: null, surpriseScaling: null,
     },
@@ -2089,7 +1944,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 4, lag: 'short', confidence: 4,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Consumer spending is ~70% of GDP — weakness drags growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -2105,7 +1959,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Weak demand data brings forward rate-cut expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2120,7 +1973,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak consumer data weighs on earnings expectations and equities.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2135,7 +1987,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weaker demand reduces pricing power, easing inflation over time.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { strength: 3 },
@@ -2148,7 +1999,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak consumer data weighs on growth stock earnings expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2163,7 +2013,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak consumer data drags Dow via reduced revenue expectations.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2178,7 +2027,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Weak spending data increases growth uncertainty and lifts volatility.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2193,7 +2041,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'flight_to_quality',
-        explanationTemplate: 'Weak demand triggers modest flight-to-quality into Treasuries.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2208,7 +2055,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'down', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'pass_through_to_borrowing_rates',
-        explanationTemplate: 'Falling yields from weak demand data ease mortgage rates.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 3 },
@@ -2222,7 +2068,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weaker consumer activity signals reduced housing demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { sign: 'mixed', strength: 1, confidence: 2 },
@@ -2238,7 +2083,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'credit_risk_repricing',
-        explanationTemplate: 'Weak consumer demand raises credit risk, widening corporate spreads.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2253,7 +2097,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak consumer spending leads firms to cut costs and slow hiring.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2268,7 +2111,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak demand slows hiring and reduces wage bargaining power.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2282,7 +2124,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 1, lag: 'short', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak consumer activity signals lower energy demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 2, sentiment: 'negative' },
@@ -2297,7 +2138,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-pce',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weak spending reduces demand-pull inflation pressure on core PCE.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             inflation_scare: { strength: 3 },
@@ -2310,7 +2150,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Weaker consumer demand leads firms to reduce hiring plans.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2319,16 +2158,15 @@ const IMPACT_RULES = [
         surpriseScaling: null,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     // SCENARIO: credit_spreads_widen_sharply
-    // ═══════════════════════════════════════════════════════════
+    // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
     {
         id: 'credit-to-corporate',
         scenarioId: 'credit_spreads_widen_sharply',
         targetIndicatorId: 'corporate-borrowing',
         sign: 'up', strength: 5, lag: 'immediate', confidence: 5,
         mechanism: 'credit_risk_repricing',
-        explanationTemplate: 'Credit spreads blow out, sharply raising corporate borrowing costs.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 4 },
@@ -2341,7 +2179,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'sp-500',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Credit stress signals risk-off, pressuring equities broadly.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -2357,7 +2194,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'vix',
         sign: 'up', strength: 4, lag: 'immediate', confidence: 5,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Financial stress lifts volatility as uncertainty spikes.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -2373,7 +2209,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'long-end-yields-10y',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'flight_to_quality',
-        explanationTemplate: 'Credit stress triggers flight-to-quality into Treasuries, pushing yields down.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2389,7 +2224,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'gdp-growth',
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter credit conditions reduce investment and slow economic growth.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2405,7 +2239,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'dow',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 4,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Broad risk-off sentiment drags equities including the Dow.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2421,7 +2254,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'nasdaq',
         sign: 'down', strength: 4, lag: 'immediate', confidence: 4,
         mechanism: 'risk_sentiment_volatility',
-        explanationTemplate: 'Risk-off hits growth stocks especially hard during credit stress.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 3 },
@@ -2437,7 +2269,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 3, lag: 'immediate', confidence: 3,
         mechanism: 'policy_path_repricing',
-        explanationTemplate: 'Credit stress signals growth slowdown, pulling rate-cut expectations forward.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2454,7 +2285,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'mortgage-rates',
         sign: 'up', strength: 3, lag: 'short', confidence: 3,
         mechanism: 'credit_risk_repricing',
-        explanationTemplate: 'Wider credit spreads pass through to higher mortgage rates despite falling Treasuries.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2470,7 +2300,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'housing-starts',
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Higher mortgage rates and tighter lending standards reduce housing activity.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2486,7 +2315,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'consumer-spending',
         sign: 'down', strength: 3, lag: 'medium', confidence: 3,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter credit conditions reduce consumer access to credit and spending.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             soft_landing: { strength: 2 },
@@ -2502,7 +2330,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'unemployment',
         sign: 'up', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter credit slows growth and hiring, eventually lifting unemployment.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3, lag: 'medium' },
@@ -2517,7 +2344,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'wage-growth',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Financial stress slows hiring and reduces wage bargaining power.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
@@ -2532,7 +2358,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'oil-barrel-price',
         sign: 'down', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'demand_growth_signal',
-        explanationTemplate: 'Credit stress signals growth weakness, reducing oil demand.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3, sentiment: 'negative' },
@@ -2547,7 +2372,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'core-cpi',
         sign: 'down', strength: 2, lag: 'long', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Tighter credit slows demand and gradually eases core inflation.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             recession_risk: { strength: 3 },
@@ -2561,7 +2385,6 @@ const IMPACT_RULES = [
         targetIndicatorId: 'job-openings',
         sign: 'down', strength: 2, lag: 'medium', confidence: 2,
         mechanism: 'financial_conditions_transmission',
-        explanationTemplate: 'Financial stress leads firms to freeze or reduce hiring plans.',
         conditionalOn: null, exceptions: null,
         regimeOverrides: {
             late_cycle: { strength: 3 },
