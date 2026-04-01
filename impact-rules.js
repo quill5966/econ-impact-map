@@ -2098,13 +2098,21 @@ const IMPACT_RULES = [
             financial_stress: { strength: 5 },
         },
         surpriseScaling: null,
+    },
+    {
+        id: 'weak-spend-to-2y',
         scenarioId: 'consumer_spending_weaker',
         targetIndicatorId: 'front-end-yields-2y',
         sign: 'down', strength: 2, lag: 'immediate', confidence: 3,
         mechanism: 'policy_path_repricing',
         explanationTemplate: 'Weak demand data brings forward rate-cut expectations.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-sp500',
@@ -2142,7 +2150,12 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weak consumer data weighs on growth stock earnings expectations.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-dow',
@@ -2152,7 +2165,12 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weak consumer data drags Dow via reduced revenue expectations.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-vix',
@@ -2162,7 +2180,12 @@ const IMPACT_RULES = [
         mechanism: 'risk_sentiment_volatility',
         explanationTemplate: 'Weak spending data increases growth uncertainty and lifts volatility.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-10y',
@@ -2172,17 +2195,26 @@ const IMPACT_RULES = [
         mechanism: 'flight_to_quality',
         explanationTemplate: 'Weak demand triggers modest flight-to-quality into Treasuries.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-mortgage',
         scenarioId: 'consumer_spending_weaker',
         targetIndicatorId: 'mortgage-rates',
-        sign: 'down', strength: 2, lag: 'medium', confidence: 2,
+        sign: 'down', strength: 2, lag: 'short', confidence: 2,
         mechanism: 'pass_through_to_borrowing_rates',
         explanationTemplate: 'Falling yields from weak demand data ease mortgage rates.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-housing',
@@ -2192,7 +2224,13 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weaker consumer activity signals reduced housing demand.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { sign: 'mixed', strength: 1, confidence: 2 },
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-corporate',
@@ -2202,7 +2240,12 @@ const IMPACT_RULES = [
         mechanism: 'credit_risk_repricing',
         explanationTemplate: 'Weak consumer demand raises credit risk, widening corporate spreads.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-unemployment',
@@ -2227,7 +2270,11 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weak demand slows hiring and reduces wage bargaining power.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-oil',
@@ -2237,7 +2284,12 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weak consumer activity signals lower energy demand.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 2, sentiment: 'negative' },
+            recession_risk: { strength: 3, sentiment: 'negative' },
+            financial_stress: { strength: 3, sentiment: 'negative' },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-core-pce',
@@ -2247,7 +2299,10 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weak spending reduces demand-pull inflation pressure on core PCE.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            inflation_scare: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'weak-spend-to-job-openings',
@@ -2257,7 +2312,11 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Weaker consumer demand leads firms to reduce hiring plans.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+        },
+        surpriseScaling: null,
     },
 
     // ═══════════════════════════════════════════════════════════
