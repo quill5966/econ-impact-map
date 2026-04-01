@@ -1870,7 +1870,7 @@ const IMPACT_RULES = [
             soft_landing: { strength: 2 },
             late_cycle: { strength: 4 },
             recession_risk: { strength: 4 },
-            inflation_scare: { sign: 'up', strength: 2, confidence: 2 },
+            inflation_scare: { sign: 'mixed', strength: 1, confidence: 2 },
             financial_stress: { strength: 4 },
         },
         surpriseScaling: null,
@@ -1956,7 +1956,12 @@ const IMPACT_RULES = [
         mechanism: 'risk_sentiment_volatility',
         explanationTemplate: 'Labor weakness weighs on growth stock sentiment.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'high-ue-to-dow',
@@ -1966,7 +1971,12 @@ const IMPACT_RULES = [
         mechanism: 'risk_sentiment_volatility',
         explanationTemplate: 'Rising unemployment signals economic weakness, pressuring Dow.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'high-ue-to-vix',
@@ -2001,7 +2011,13 @@ const IMPACT_RULES = [
         mechanism: 'financial_conditions_transmission',
         explanationTemplate: 'The demand hit from rising unemployment outweighs lower mortgage rate benefits.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            soft_landing: { sign: 'mixed', strength: 1, confidence: 2 },
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 3 },
+            financial_stress: { strength: 4 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'high-ue-to-corporate',
@@ -2011,7 +2027,12 @@ const IMPACT_RULES = [
         mechanism: 'credit_risk_repricing',
         explanationTemplate: 'Rising unemployment raises credit risk, widening corporate spreads.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3 },
+            recession_risk: { strength: 4 },
+            financial_stress: { strength: 5 },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'high-ue-to-oil',
@@ -2021,7 +2042,12 @@ const IMPACT_RULES = [
         mechanism: 'demand_growth_signal',
         explanationTemplate: 'Labor weakness signals softening demand, pressuring oil prices.',
         conditionalOn: null, exceptions: null,
-        regimeOverrides: null, surpriseScaling: null,
+        regimeOverrides: {
+            late_cycle: { strength: 3, sentiment: 'negative' },
+            recession_risk: { strength: 3, sentiment: 'negative' },
+            financial_stress: { strength: 4, sentiment: 'negative' },
+        },
+        surpriseScaling: null,
     },
     {
         id: 'high-ue-to-core-cpi',
