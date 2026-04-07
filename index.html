@@ -31,12 +31,29 @@
   <!-- View content area (scrollable, one view visible at a time) -->
   <div class="view-content" id="viewContent"></div>
 
-  <!-- FRED® API attribution (required by Terms of Use) -->
-  <footer class="api-footer">
-    This product uses the FRED&reg; API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
-    <a href="https://fred.stlouisfed.org/docs/api/terms_of_use.html" target="_blank" rel="noopener">FRED&reg; API Terms
-      of Use</a>
+  <!-- FRED® API attribution and Legal links -->
+  <footer class="api-footer" id="apiFooter">
+    <div class="footer-links">
+      <a href="#" id="linkPrivacy">Privacy Policy</a>
+      <span class="footer-sep">•</span>
+      <a href="#" id="linkTerms">Terms of Use</a>
+      <span class="footer-sep">•</span>
+      <a href="https://fred.stlouisfed.org/docs/api/terms_of_use.html" target="_blank" rel="noopener">FRED&reg; API Terms</a>
+    </div>
+    <div class="footer-disclaimer">
+      This product uses the FRED&reg; API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
+    </div>
   </footer>
+
+  <!-- Legal Modal -->
+  <div class="legal-modal-backdrop" id="legalModalBackdrop"></div>
+  <div class="legal-modal" id="legalModal">
+    <div class="legal-modal-header">
+      <h2 id="legalModalTitle">Title</h2>
+      <button class="legal-modal-close" id="legalModalClose">&times;</button>
+    </div>
+    <div class="legal-modal-body" id="legalModalBody"></div>
+  </div>
 
   <!-- Data layer scripts (order matters — dependencies first) -->
   <script src="indicators.js"></script>

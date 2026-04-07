@@ -1440,6 +1440,129 @@ body {
 
 
 
+/* ===== LEGAL MODAL & FOOTER ===== */
+.api-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 16px;
+  margin-top: 24px;
+}
+.footer-links {
+  margin-bottom: 6px;
+}
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.footer-links a:hover {
+  color: var(--accent-hover);
+}
+.footer-sep {
+  margin: 0 8px;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.legal-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10, 10, 14, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.legal-modal-backdrop.open {
+  display: block;
+  opacity: 1;
+}
+
+.legal-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  background: var(--bg-surface1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  z-index: 1001;
+  display: none;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.legal-modal.open {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+/* This is a hack to get display:flex and display:none working via classes cleanly */
+.legal-modal:not(.open) {
+  display: none;
+}
+
+.legal-modal-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 17, 23, 0.95);
+}
+.legal-modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+.legal-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+.legal-modal-close:hover {
+  color: var(--text-primary);
+}
+
+.legal-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.legal-modal-body h3 {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 16px 0 8px;
+}
+.legal-modal-body h3:first-child {
+  margin-top: 0;
+}
+.legal-modal-body p {
+  margin-bottom: 12px;
+}
+.legal-modal-body a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.legal-modal-body a:hover {
+  text-decoration: underline;
+}
+
 /* ===== VIEW RESPONSIVE ===== */
 @media (max-width: 1100px) {
   .view-switcher {

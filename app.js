@@ -458,6 +458,62 @@ function updateTimestamp() {
     el.textContent = now.toLocaleDateString('en-US', opts);
 }
 
+// ===== LEGAL MODALS =====
+
+const privacyPolicyContent = `
+    <h3>1. Data Collection and Usage</h3>
+    <p>MacroCausal is a client-side visualization tool designed for educational purposes. We do not collect, store, share, or sell any personal data or personally identifiable information (PII). The application runs entirely within your web browser. Last Updated: April 2026.</p>
+    
+    <h3>2. Cookies and Tracking</h3>
+    <p>MacroCausal does not use proprietary tracking cookies or analytics software to monitor your usage of the site.</p>
+    
+    <h3>3. Third-Party Services</h3>
+    <p>This application fetches economic data from the Federal Reserve Economic Data (FRED&reg;) API. By using this application, your browser may establish direct connections to FRED&reg; servers. Please refer to the <a href="https://research.stlouisfed.org/privacy.html" target="_blank">Federal Reserve Bank of St. Louis Privacy Policy</a> for information on how they handle such connections.</p>
+`;
+
+const termsOfUseContent = `
+    <h3>1. Educational Purposes Only</h3>
+    <p>MacroCausal is a simplified simulator intended solely for educational and informational purposes. The scenarios, causal chains, and logic presented do not constitute guaranteed outcomes or financial advice. We make no representations or warranties regarding the accuracy, completeness, or reliability of the data or causal relationships shown. Last Updated: April 2026.</p>
+    
+    <h3>2. FRED&reg; API Terms of Use</h3>
+    <p>This product uses the FRED&reg; API but is not endorsed or certified by the Federal Reserve Bank of St. Louis. By using the MacroCausal application, you explicitly agree to be bound by the <a href="https://fred.stlouisfed.org/docs/api/terms_of_use.html" target="_blank">FRED&reg; API Terms of Use</a>.</p>
+    
+    <h3>3. Third-Party Data and Copyrights</h3>
+    <p>While many economic indicators are public domain, some data series available via the FRED&reg; API may be owned by third parties and subject to copyright restrictions. Your use of this application does not override those owners' copyrights.</p>
+    
+    <h3>4. Liability</h3>
+    <p>The creators of MacroCausal shall not be held liable for any decisions, financial or otherwise, made based on the information provided in this application. Use of the application is at your own risk.</p>
+`;
+
+function openLegalModal(title, content) {
+    document.getElementById('legalModalTitle').textContent = title;
+    document.getElementById('legalModalBody').innerHTML = content;
+    document.getElementById('legalModalBackdrop').classList.add('open');
+    document.getElementById('legalModal').classList.add('open');
+}
+
+function closeLegalModal() {
+    document.getElementById('legalModalBackdrop').classList.remove('open');
+    document.getElementById('legalModal').classList.remove('open');
+}
+
+function initModals() {
+    // Use event delegation on the document body because the footer is 
+    // dynamically destroyed and recreated by switchView()
+    document.addEventListener('click', (e) => {
+        if (e.target.id === 'linkPrivacy') {
+            e.preventDefault();
+            openLegalModal('Privacy Policy', privacyPolicyContent);
+        } else if (e.target.id === 'linkTerms') {
+            e.preventDefault();
+            openLegalModal('Terms of Use', termsOfUseContent);
+        } else if (e.target.id === 'legalModalClose' || e.target.id === 'legalModalBackdrop' || e.target.closest('#legalModalClose')) {
+            // Also check closest in case they click the icon inside the button
+            closeLegalModal();
+        }
+    });
+}
+
 // ===== INIT =====
 
 async function init() {
@@ -469,6 +525,7 @@ async function init() {
     buildScenarioDropdown();
     renderBanner();
     renderViewSwitcher();
+    initModals();
     switchView('heatmap');
 }
 
