@@ -2,6 +2,8 @@
 
 An interactive web app that visualizes **macroeconomic causal loops** — how major economic themes (Fed Policy, Inflation, Labor, etc.) influence each other — and lets you simulate **scenario shocks** to see how impacts propagate through the system.
 
+> **Note:** This application is intended to be run locally for educational purposes and is **not published publicly** strictly due to third-party copyright restrictions on some of the underlying economic index data.
+
 ## Quick Start
 
 1. Serve locally. Then visit the URL shown (typically `http://localhost:3000`).
@@ -26,7 +28,7 @@ MacroCausal uses a **4-layer hybrid model** where static, curated causal logic i
 ```
 L1: Indicators         24 economic variables with live observations
 L2: Scenarios           9 headline shock templates (policy, inflation, labor, growth, credit)
-L3: Impact Rules       60+ deterministic causal edges with sign, strength, lag, mechanism
+L3: Impact Rules       177 deterministic causal rules with sign, strength, lag, mechanism
 L4: Causal Engine      ScenarioRunContext → ComputedImpact[] with full audit trail
 ```
 
@@ -36,20 +38,19 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design doc.
 
 ## Features
 
-- **5 theme nodes** in a circular layout: Policy Instruments, Financial Conditions, Real Economy, Inflation, Market Pricing & Risk Sentiment
-- **Real economic data** sourced from BLS, BEA, and Federal Reserve (as of Feb 2026)
+- **5 theme groups**: Policy Instruments, Financial Conditions, Real Economy, Inflation, Market Pricing & Risk Sentiment
+- **Real economic data** sourced from BLS, BEA, and Federal Reserve via the FRED® API
 - **9 scenario presets** covering Fed policy, inflation, labor, growth, and credit shocks
 - **11 reusable causal mechanisms** with templated descriptions
 - **Scenario controls**: surprise size (S/M/L), macro regime, "already priced in" dampening
 - **HEADLINE IMPACT column** appears on indicator cards when a scenario is active
-- **Propagation arrows** from originating node to downstream nodes, color-coded by lag timing
-- **Glassmorphism UI** with per-node color coding and animated flow particles
-- **Interactive**: hover to brighten, click to highlight connected edges
+- **Glassmorphism UI** with per-node color coding
+- **Interactive**: hover effects on indicator cards and scenario controls
 
 ## Tech Stack
 
 - Vanilla HTML / CSS / JS (zero dependencies, no build step)
-- SVG for curved arrow paths and propagation arrows
+- SVG for gauge visualizations and tab icons
 - CSS custom properties for theming
 
 ## File Structure
@@ -61,18 +62,18 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design doc.
 ├── scenarios.js         # L2: Scenario presets
 ├── mechanisms.js        # L3: Mechanism registry
 ├── impact-rules.js      # L3: Causal rules
+├── tooltip-text.js      # Regime-aware tooltip text lookup
 ├── causal-engine.js     # L4: Deterministic engine
 ├── relationships.js     # Subitem causal edges
 ├── app.js               # Layout, rendering, view switching
 ├── view-heatmap.js      # View: Full Picture (heatmap grid)
 ├── view-timeline.js     # View: Story (timeline feed)
 ├── view-gauges.js       # View: Summary (gauge dials)
+├── update-indicators.js # FRED® API data update script
+├── verify-rules.js      # Rule integrity checker
+├── data/
+│   ├── observations.json  # Runtime indicator data
+│   └── fomc-cache.json    # Cached FOMC classifications
 ├── ARCHITECTURE.md      # Full architecture doc
 └── README.md            # This file
 ```
-
-## Roadmap
-
-- **Phase 1** ✅ — 4-layer architecture, 9 scenarios, causal engine, scenario picker UI
-- **Phase 2** — LLM narrative layer (polished tooltips, chain-reaction walkthroughs)
-- **Phase 3+** — Beginner/advanced toggle, scenario composition, real-time data integration

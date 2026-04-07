@@ -2,20 +2,6 @@
 
 This document describes the hybrid 4-layer architecture that powers scenario simulation in MacroCausal.
 
-## Design Philosophy
-
-> **Same scenario → same result, every time.**
-
-The core causal logic is **static, curated, and version-controlled**. An LLM (Phase 2+) sits on top purely as a narrative layer — it never decides *what* happens, only *how to explain* what happened.
-
-| What's static (authoritative) | What's dynamic (LLM-friendly, Phase 2+) |
-|-------------------------------|------------------------------------------|
-| Sign, strength, lag, confidence | Polished tooltip wording |
-| Mechanisms, conditions, regime overrides | Beginner vs advanced phrasing |
-| Surprise scaling, exceptions | "Tell me the chain reaction" walkthrough |
-| Tooltip text (regime-aware fallback) | Cross-indicator comparisons, analogies |
-
----
 
 ## Architecture Diagram
 
@@ -184,22 +170,6 @@ ComputedImpact[] — sorted by lag, then strength descending
 
 ---
 
-## UI: Propagation Visualization
-
-When a scenario fires, the UI shows:
-
-1. **HEADLINE IMPACT column** — each card gains a 4th column showing `↑ ●●●●○` or `↓ ●●○○○` per affected indicator
-2. **Propagation arrows** — curved SVG arrows from the originating node to each downstream impacted node, color-coded and dash-styled by lag:
-
-| Lag Bucket | Display Label | Line Style | Color |
-|-----------|---------------|-----------|-------|
-| immediate | minutes to days | Solid | Green `#4ade80` |
-| short | days to weeks | Dashed `10,5` | Blue `#60a5fa` |
-| medium | months | Dotted `4,6` | Gold `#eab308` |
-| long | months | Sparse dots `2,8` | Red `#f87171` |
-
----
-
 ## File Map
 
 ```
@@ -212,17 +182,16 @@ econ-impact-map/
 ├── impact-rules.js      # L3: 177 scenario-to-indicator rules
 ├── tooltip-text.js      # Regime-aware tooltip text (keyed by rule ID)
 ├── causal-engine.js     # L4: Deterministic engine
+├── relationships.js     # Subitem causal edges
 ├── app.js               # Layout, rendering, scenario panel, interactions
+├── view-heatmap.js      # View: Full Picture (heatmap grid)
+├── view-timeline.js     # View: Story (timeline feed)
+├── view-gauges.js       # View: Summary (gauge dials)
+├── update-indicators.js # FRED® API data update script
+├── verify-rules.js      # Rule integrity checker
+├── data/
+│   ├── observations.json  # Runtime indicator data
+│   └── fomc-cache.json    # Cached FOMC classifications
 ├── ARCHITECTURE.md      # This file
 └── README.md
 ```
-
----
-
-## Roadmap
-
-| Phase | Focus | Status |
-|-------|-------|--------|
-| **Phase 1** | 4-layer data model, 9 scenarios, 11 mechanisms, causal engine, scenario picker UI | ✅ Done |
-| **Phase 2** | LLM narrative layer — polished tooltips, chain-reaction walkthroughs | Planned |
-| **Phase 3+** | Beginner/advanced toggle, scenario composition, analogies, real-time data | Future |

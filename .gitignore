@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 *.log
 .env
+data/observations.json
+data/fomc-cache.json
