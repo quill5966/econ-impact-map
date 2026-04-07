@@ -11,7 +11,7 @@ let NODES = [];
 let activeScenarioResult = null;
 
 // ── View switcher state ──
-let activeView = 'heatmap';         // 'heatmap' | 'timeline' | 'gauges' | 'causal'
+let activeView = 'heatmap';         // 'heatmap' | 'timeline' | 'gauges'
 let scenarioViewHistory = {};       // { scenarioId: lastTabUsed }
 let lastScenarioId = null;
 
@@ -22,8 +22,7 @@ let lastScenarioId = null;
 const VIEW_TABS = [
     { id: 'heatmap', label: 'Full Picture', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>` },
     { id: 'timeline', label: 'Story', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><line x1="4" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="13" x2="14" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="1.5" cy="3" r="1" fill="currentColor"/><circle cx="1.5" cy="8" r="1" fill="currentColor"/><circle cx="1.5" cy="13" r="1" fill="currentColor"/></svg>` },
-    { id: 'gauges', label: 'Summary', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 12 A5 5 0 0 1 13 12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="8" y1="12" x2="5.5" y2="7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r="1.2" fill="currentColor"/></svg>` },
-    { id: 'causal', label: 'Causal Chain', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="3" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="7.2" x2="11" y2="4.8" stroke="currentColor" stroke-width="1.2"/><line x1="5" y1="8.8" x2="11" y2="11.2" stroke="currentColor" stroke-width="1.2"/></svg>`, badge: 'soon' },
+    { id: 'gauges', label: 'Summary', icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 12 A5 5 0 0 1 13 12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><line x1="8" y1="12" x2="5.5" y2="7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r="1.2" fill="currentColor"/></svg>` }
 ];
 
 /**
@@ -81,9 +80,6 @@ function switchView(viewId) {
             break;
         case 'gauges':
             renderGaugesView(viewContent);
-            break;
-        case 'causal':
-            renderCausalChainView(viewContent);
             break;
         default:
             renderHeatmapView(viewContent);

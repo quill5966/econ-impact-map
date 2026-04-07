@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-01T21:16:17.665Z",
+  "lastUpdated": "2026-04-07T15:23:33.353Z",
   "observations": {
     "fed-funds-target": {
       "value": "3.50–3.75%",
@@ -14,16 +14,16 @@
       "period": "Mar 18, 2026"
     },
     "front-end-yields-2y": {
-      "value": "3.79%",
-      "period": "Mar 31, 2026"
+      "value": "3.84%",
+      "period": "Apr 3, 2026"
     },
     "long-end-yields-10y": {
-      "value": "4.30%",
-      "period": "Mar 31, 2026"
+      "value": "4.35%",
+      "period": "Apr 3, 2026"
     },
     "mortgage-rates": {
-      "value": "6.38%",
-      "period": "Mar 26, 2026"
+      "value": "6.46%",
+      "period": "Apr 2, 2026"
     },
     "housing-starts": {
       "value": "1.49M SAAR",
@@ -34,24 +34,24 @@
       "period": "Jan 2026"
     },
     "corporate-borrowing": {
-      "value": "IG Spread 90bp",
-      "period": "Mar 31, 2026"
+      "value": "IG Spread 85bp",
+      "period": "Apr 6, 2026"
     },
     "gdp-growth": {
       "value": "+0.7%",
       "period": "Q4 2025"
     },
     "unemployment": {
-      "value": "4.40%",
-      "period": "Feb 2026"
+      "value": "4.30%",
+      "period": "Mar 2026"
     },
     "job-openings": {
       "value": "6.9M",
       "period": "Feb 2026"
     },
     "wage-growth": {
-      "value": "+0.4% YoY",
-      "period": "Feb 2026"
+      "value": "+0.2% YoY",
+      "period": "Mar 2026"
     },
     "core-cpi": {
       "value": "+2.5% YoY",
@@ -82,20 +82,20 @@
       "period": "Mar 30, 2026"
     },
     "dow": {
-      "value": "46,342",
-      "period": "Mar 31, 2026"
+      "value": "46,670",
+      "period": "Apr 6, 2026"
     },
     "nasdaq": {
-      "value": "21,591",
-      "period": "Mar 31, 2026"
+      "value": "21,996",
+      "period": "Apr 6, 2026"
     },
     "sp-500": {
-      "value": "6,529",
-      "period": "Mar 31, 2026"
+      "value": "6,612",
+      "period": "Apr 6, 2026"
     },
     "vix": {
-      "value": "25.25",
-      "period": "Mar 31, 2026"
+      "value": "24.17",
+      "period": "Apr 6, 2026"
     }
   }
 }

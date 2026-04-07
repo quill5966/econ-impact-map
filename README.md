@@ -67,7 +67,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design doc.
 ├── view-heatmap.js      # View: Full Picture (heatmap grid)
 ├── view-timeline.js     # View: Story (timeline feed)
 ├── view-gauges.js       # View: Summary (gauge dials)
-├── view-causal-chain.js # View: Causal Chain (deferred — stub)
 ├── ARCHITECTURE.md      # Full architecture doc
 └── README.md            # This file
 ```

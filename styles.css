@@ -1438,15 +1438,7 @@ body {
   color: var(--text-muted);
 }
 
-/* ===== CAUSAL CHAIN VIEW (Placeholder) ===== */
-.causal-chain-view {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-}
 
-/* .causal-chain-placeholder + .ccp-* → uses .empty-state (reusable) */
 
 /* ===== VIEW RESPONSIVE ===== */
 @media (max-width: 1100px) {
