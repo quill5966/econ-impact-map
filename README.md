@@ -2,7 +2,7 @@
 
 An interactive web app that visualizes **macroeconomic causal loops** — how major economic themes (Fed Policy, Inflation, Labor, etc.) influence each other — and lets you simulate **scenario shocks** to see how impacts propagate through the system.
 
-> **Note:** This application is intended to be run locally for educational purposes and is **not published publicly** strictly due to third-party copyright restrictions on some of the underlying economic index data.
+> **Note:** The published version of this application excludes FRED data due to third-party copyright restrictions on some of the underlying economic index data.
 
 ## Quick Start
 
