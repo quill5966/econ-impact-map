@@ -23,7 +23,7 @@ node update-indicators.js --fomc-only # only run FOMC classification
 
 ## Hybrid Architecture
 
-MacroCausal uses a **4-layer hybrid model** where static, curated causal logic is the source of truth. An LLM (Phase 2+) will sit on top as a narrative layer — it will never decide *what* happens, only *how to explain* what happened.
+MacroCausal uses a **4-layer hybrid model** where static, curated causal logic is the source of truth. 
 
 ```
 L1: Indicators         24 economic variables with live observations
